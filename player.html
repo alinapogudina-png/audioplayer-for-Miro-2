@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Audio Player</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Подключение шрифтов с кириллицей -->
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Kelly+Slab&family=Lobster&family=Merriweather:wght@400;700&family=Montserrat:wght@400;700&family=Nunito:wght@400;700&family=Open+Sans:wght@400;700&family=Pacifico&family=Playfair+Display:wght@400;700&family=Poppins:wght@400;600&family=Press+Start+2P&family=Roboto+Mono&family=Ruslan+Display&family=Underdog&display=swap&subset=cyrillic" rel="stylesheet">
+    
     <style>
         *, *::before, *::after { box-sizing: border-box; }
 
@@ -14,7 +17,6 @@
             --neon-color: #00FFFF;
             --font-family: 'Poppins', sans-serif;
         }
-        @import url('https://fonts.googleapis.com/css2?family=Caveat&family=Lato&family=Merriweather&family=Montserrat&family=Nunito&family=Oswald&family=Playfair+Display&family=Poppins:wght@400;500;600&family=Press+Start+2P&family=Roboto+Mono&display=swap');
         
         body {
             font-family: var(--font-family), sans-serif;
@@ -25,7 +27,6 @@
             overflow: hidden;
         }
 
-        /* Обертка для масштабирования */
         .scale-wrapper {
             transform-origin: center center;
             display: flex; align-items: center; justify-content: center;
@@ -47,18 +48,12 @@
             border-radius: 20px;
         }
 
-        /* Неон */
         .player-container.neon {
             box-shadow: 0 0 10px var(--neon-color), 0 0 25px var(--neon-color), 0 0 50px var(--neon-color);
         }
 
-        /* Внутренняя структура */
-        .main-view {
-            display: flex; width: 100%; height: 100%; gap: 15px; flex-grow: 1;
-        }
-        .controls-info {
-            flex-grow: 1; display: flex; flex-direction: column; justify-content: center; gap: 5px;
-        }
+        .main-view { display: flex; width: 100%; height: 100%; gap: 15px; flex-grow: 1; }
+        .controls-info { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; gap: 5px; }
         
         .album-art {
             width: 140px; height: 140px; border-radius: 15px; object-fit: cover; flex-shrink: 0;
@@ -93,14 +88,14 @@
 
         /* --- ДИЗАЙНЫ --- */
 
-        /* 1. Стандарт (Прямоугольный) */
+        /* 1. Стандарт */
         .player-container.design-standard { flex-direction: row; }
         .player-container.design-standard.full-mode { flex-direction: column; }
         .player-container.design-standard.full-mode .main-view { flex-direction: column; height: auto; }
         .player-container.design-standard.full-mode .playlist-container { display: block; flex-grow: 1; }
         .player-container.design-standard.full-mode .album-art { width: 100px; height: 100px; align-self: center; }
 
-        /* 2. Круглый (Round) */
+        /* 2. Круглый (Исправлен размер) */
         .player-container.design-round {
             border-radius: 50% !important;
             flex-direction: column;
@@ -108,7 +103,6 @@
             justify-content: center;
             text-align: center;
             padding: 20px;
-            /* Важно: цвет фона здесь переопределяется скриптом, но форма круга задается тут */
         }
         .design-round .main-view { flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
         .design-round .album-art { width: 90px; height: 90px; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.4); } 
@@ -118,43 +112,41 @@
         .design-round #track-title { font-size: 16px; margin-top: 5px; }
         .design-round #track-artist { font-size: 12px; }
 
-        /* 3. Русский стиль (Russian) - Текстура дерева на CSS */
+        /* 3. Русский стиль (Хохлома vibe) */
         .player-container.design-russian {
-            background-color: #5D4037 !important; /* Основа */
-            /* Узор дерева через градиент */
-            background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 2px, transparent 2px, transparent 4px),
-                              linear-gradient(to bottom, #5D4037, #3E2723);
-            border: 4px solid #FFD700;
-            box-shadow: inset 0 0 20px #000;
-            border-radius: 10px;
+            /* Богатый черно-красно-золотой фон */
+            background: radial-gradient(circle at center, #3a0000 0%, #000000 100%) !important;
+            /* Рамка под дерево/золото */
+            border: 6px solid #B8860B;
+            border-radius: 12px;
+            box-shadow: inset 0 0 30px #000, 0 10px 25px rgba(0,0,0,0.6);
         }
-        .design-russian #track-title, .design-russian #track-artist { 
-            font-family: 'Playfair Display', serif; color: #FFD700; text-shadow: 1px 1px 0 #000; 
+        /* Декоративные уголки через псевдоэлементы */
+        .player-container.design-russian::before {
+            content: ''; position: absolute; top: 5px; left: 5px; right: 5px; bottom: 5px;
+            border: 2px solid #FFD700; border-radius: 6px; pointer-events: none; opacity: 0.5;
         }
+        /* Стили шрифтов для русского стиля */
+        .design-russian { font-family: 'Ruslan Display', cursive !important; }
+        .design-russian #track-title { color: #FFD700; text-shadow: 2px 2px 0px #000; font-size: 22px; letter-spacing: 1px; }
+        .design-russian #track-artist { color: #FF6347; font-family: 'Playfair Display', serif; }
+        
         .design-russian .control-btn { color: #FFD700; opacity: 0.9; }
-        .design-russian .control-btn:hover { color: #fff; text-shadow: 0 0 10px #FFD700; transform: scale(1.1); }
-        .design-russian #progress-bar::-webkit-slider-thumb { background: #FFD700; border: 2px solid #8B4513; }
-        .design-russian .album-art { border: 3px solid #FFD700; border-radius: 5px; }
-        .design-russian.neon { box-shadow: 0 0 20px #FFD700; } /* Золотое свечение */
+        .design-russian .control-btn:hover { color: #fff; text-shadow: 0 0 10px #FFD700; transform: scale(1.15); }
+        .design-russian #progress-bar::-webkit-slider-thumb { background: #FF0000; border: 2px solid #FFD700; }
+        .design-russian .album-art { border: 3px solid #B8860B; border-radius: 50%; } /* Круглая обложка для стиля */
+        
+        .design-russian.neon { box-shadow: 0 0 25px #FFD700; }
 
         /* 4. Минимализм */
         .player-container.design-minimalist {
-            border-radius: 8px;
-            border: none;
-            /* Фон задается через JS, но убираем блюр и рамки */
-            backdrop-filter: none;
-            box-shadow: none;
+            border-radius: 8px; border: none; backdrop-filter: none; box-shadow: none;
         }
         .design-minimalist.neon { box-shadow: none !important; filter: drop-shadow(0 0 8px var(--neon-color)); }
         .design-minimalist .album-art { border-radius: 4px; box-shadow: none; }
-        .design-minimalist .control-btn { opacity: 0.7; }
-        .design-minimalist .control-btn:hover, .design-minimalist .control-btn.active { opacity: 1; transform: none; }
-
     </style>
 </head>
 <body>
-    <!-- Copyright (c) 2026 Alina Pogudina @ELT_workshop -->
-    
     <div id="scaleWrapper" class="scale-wrapper">
         <div id="player" class="player-container">
             <div class="main-view">
@@ -179,9 +171,7 @@
                     </div>
                 </div>
             </div>
-            <div class="playlist-container">
-                <ul id="playlist"></ul>
-            </div>
+            <div class="playlist-container"><ul id="playlist"></ul></div>
         </div>
     </div>
 
@@ -217,9 +207,11 @@
             return `rgba(${r},${g},${b},${alpha})`;
         }
 
-        // --- Масштабирование ---
+        // --- Масштабирование (с поправкой на круг) ---
         function fitToScreen() {
-            const scale = Math.min(window.innerWidth / baseW, window.innerHeight / baseH);
+            // Множитель 0.9 создает 10% отступ, чтобы круг не прилипал к краям
+            const factor = player.classList.contains('design-round') ? 0.9 : 1.0;
+            const scale = Math.min(window.innerWidth / baseW, window.innerHeight / baseH) * factor;
             scaleWrapper.style.width = baseW + 'px';
             scaleWrapper.style.height = baseH + 'px';
             scaleWrapper.style.transform = `scale(${scale})`;
@@ -238,17 +230,17 @@
             const root = document.documentElement;
             const design = params.get('design') || 'standard';
             const size = params.get('size') || 'compact';
-            
-            // 1. Применяем цвет
             const color = params.get('color') || '#4B0082';
+            
+            // Цвет
             const rgbaColor = hexToRgba(color, 0.75);
             root.style.setProperty('--player-bg-color-dynamic', rgbaColor);
-            
-            // Сбрасываем стили фона, если вдруг дизайн их перезапишет
             player.style.backgroundColor = rgbaColor;
 
-            // 2. Шрифт и Неон
+            // Шрифт
             root.style.setProperty('--font-family', params.get('font') || 'Poppins');
+
+            // Неон
             if (params.get('neon') === 'true') {
                 player.classList.add('neon');
                 root.style.setProperty('--neon-color', params.get('neonColor') || '#FF00FF');
@@ -256,17 +248,15 @@
                 player.classList.remove('neon');
             }
 
-            // 3. Сброс классов дизайна
+            // Сброс и применение дизайна
             player.classList.remove('design-standard', 'design-round', 'design-russian', 'design-minimalist', 'compact', 'full-mode');
 
-            // 4. Применение Дизайна и Размеров
             if (design === 'round') {
                 player.classList.add('design-round');
-                baseW = 320; baseH = 320; // Квадратная база для круга
+                baseW = 320; baseH = 320; 
             } 
             else if (design === 'russian') {
                 player.classList.add('design-russian');
-                // Русский игнорирует цвет фона (там дерево), но акцент остается
                 setupStandardSize(size);
             } 
             else if (design === 'minimalist') {
@@ -274,7 +264,6 @@
                 setupStandardSize(size);
             } 
             else {
-                // Standard
                 player.classList.add('design-standard');
                 setupStandardSize(size);
             }
@@ -311,22 +300,39 @@
         function playTrack() { if(!isVisualizerInit) initVisualizer(); audio.play().then(()=>{ isPlaying=true; playPauseBtn.innerHTML='<i class="fas fa-pause-circle"></i>';}).catch(()=>{}); }
         function pauseTrack() { audio.pause(); isPlaying=false; playPauseBtn.innerHTML='<i class="fas fa-play-circle"></i>'; }
         function togglePlay() { if(tracks.length) isPlaying?pauseTrack():playTrack(); }
-        function nextTrack() { currentTrackIdx = isShuffle ? Math.floor(Math.random()*tracks.length) : (currentTrackIdx+1)%tracks.length; loadTrack(currentTrackIdx); playTrack(); }
+        function nextTrack() {
+            if (isShuffle) {
+                currentTrackIdx = Math.floor(Math.random()*tracks.length);
+            } else {
+                currentTrackIdx = (currentTrackIdx+1)%tracks.length;
+                // Если круг замкнулся и не стоит повтор - стоп
+                if (currentTrackIdx === 0 && !isRepeat && !isShuffle) {
+                    pauseTrack(); return;
+                }
+            }
+            loadTrack(currentTrackIdx); playTrack();
+        }
         function prevTrack() { currentTrackIdx = (currentTrackIdx-1+tracks.length)%tracks.length; loadTrack(currentTrackIdx); playTrack(); }
 
         audio.addEventListener('timeupdate', () => { if(audio.duration) { progressBar.value = (audio.currentTime/audio.duration)*100; currentTimeEl.textContent = fmtTime(audio.currentTime); totalDurationEl.textContent = fmtTime(audio.duration); }});
         progressBar.addEventListener('input', (e) => { audio.currentTime = (e.target.value/100)*audio.duration; });
-        audio.addEventListener('ended', () => { if(isRepeat){audio.currentTime=0; playTrack();} else nextTrack(); });
+        
+        // Исправленная логика окончания трека
+        audio.addEventListener('ended', () => { 
+            if(isRepeat) {
+                audio.currentTime=0; playTrack(); // Если включен повтор - играем снова
+            } else {
+                // Если не повтор, но есть след. трек - играем. Если плейлист кончился - стоп.
+                if (currentTrackIdx < tracks.length - 1 || isShuffle) {
+                    nextTrack();
+                } else {
+                    pauseTrack(); // Конец плейлиста
+                }
+            }
+        });
         
         function fmtTime(s) { const m=Math.floor(s/60), sc=Math.floor(s%60); return `${m}:${sc<10?'0':''}${sc}`; }
-        
-        function buildPlaylist() {
-            playlistEl.innerHTML = '';
-            tracks.forEach((t, i) => {
-                const li = document.createElement('li'); li.className = 'playlist-item'; li.textContent = t.name;
-                li.onclick = () => { loadTrack(i); playTrack(); }; playlistEl.appendChild(li);
-            });
-        }
+        function buildPlaylist() { playlistEl.innerHTML = ''; tracks.forEach((t, i) => { const li = document.createElement('li'); li.className = 'playlist-item'; li.textContent = t.name; li.onclick = () => { loadTrack(i); playTrack(); }; playlistEl.appendChild(li); }); }
         function updatePlaylistUI() { Array.from(playlistEl.children).forEach((li, i) => li.classList.toggle('playing', i === currentTrackIdx)); }
 
         playPauseBtn.onclick = togglePlay; nextBtn.onclick = nextTrack; prevBtn.onclick = prevTrack;
@@ -349,9 +355,7 @@
             analyser.getByteFrequencyData(dataArray); ctx.clearRect(0,0,canvas.width,canvas.height);
             const barW = (canvas.width/dataArray.length)*2; let x=0;
             ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--player-accent-color').trim();
-            for(let i=0; i<dataArray.length; i++) {
-                const h = dataArray[i]/255*canvas.height; ctx.fillRect(x, canvas.height-h, barW, h); x+=barW+1;
-            }
+            for(let i=0; i<dataArray.length; i++) { const h = dataArray[i]/255*canvas.height; ctx.fillRect(x, canvas.height-h, barW, h); x+=barW+1; }
         }
     </script>
 </body>
