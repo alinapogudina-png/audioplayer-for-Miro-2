@@ -1,231 +1,108 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Audio Player</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Kelly+Slab&family=Lobster&family=Merriweather:wght@400;700&family=Montserrat:wght@400;700&family=Nunito:wght@400;700&family=Open+Sans:wght@400;700&family=Pacifico&family=Playfair+Display:wght@400;700&family=Poppins:wght@400;600&family=Press+Start+2P&family=Roboto+Mono&family=Ruslan+Display&family=Underdog&display=swap&subset=cyrillic" rel="stylesheet">
-    
+    <title>Редактор аудиоплеера</title>
     <style>
-        *, *::before, *::after { box-sizing: border-box; }
-        :root { --accent: #00c6ff; --bg: rgba(26,26,46,0.7); --neon: #00FFFF; --font: 'Poppins', sans-serif; }
-        body { font-family: var(--font), sans-serif; background: transparent; margin: 0; padding: 0; display: flex; align-items: center; justify-content: center; height: 100vh; width: 100vw; overflow: hidden; }
-        
-        .scale-wrapper { transform-origin: center; display: flex; align-items: center; justify-content: center; }
-        
-        .player-container {
-            width: 100%; height: 100%; display: flex; background: var(--bg);
-            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255,255,255,0.1); color: #fff; position: relative;
-            overflow: hidden; transition: 0.3s ease; padding: 15px; border-radius: 20px;
-        }
-        .player-container.neon { box-shadow: 0 0 15px var(--neon); }
-
-        /* Компактный режим */
-        .main-view { display: flex; width: 100%; height: 100%; gap: 15px; flex-grow: 1; min-height: 0; }
-        .controls-info { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; gap: 5px; }
-        .album-art { width: 140px; height: 140px; border-radius: 15px; object-fit: cover; flex-shrink: 0; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-        .track-info { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-shadow: 0 0 5px rgba(0,0,0,0.5); }
-        #track-title { font-size: 20px; font-weight: 600; margin: 0; }
-        #track-artist { font-size: 14px; opacity: 0.8; margin: 0; }
-        .progress-container { width: 100%; display: flex; align-items: center; gap: 8px; font-size: 12px; margin: 5px 0; }
-        #progress-bar { -webkit-appearance: none; width: 100%; height: 5px; background: rgba(255,255,255,0.3); border-radius: 5px; cursor: pointer; }
-        #progress-bar::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; background: var(--accent); border-radius: 50%; border: 2px solid #fff; }
-        .player-controls { display: flex; justify-content: center; gap: 15px; margin-top: 5px; }
-        .control-btn { background: none; border: none; color: #fff; font-size: 18px; cursor: pointer; transition: 0.2s; }
-        .control-btn:hover, .control-btn.active { color: var(--accent); transform: scale(1.1); }
-        #play-pause-btn { font-size: 34px; }
-        #visualizer { width: 100%; height: 30px; opacity: 0.6; }
-        
-        .playlist-container { display: none; overflow-y: auto; margin-top: 10px; width: 100%; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 5px; flex: 1; min-height: 0; }
-        .playlist-item { padding: 8px; border-radius: 5px; font-size: 13px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .playlist-item:hover { background: rgba(255,255,255,0.1); }
-        .playlist-item.playing { background: var(--accent); color: #fff; font-weight: bold; }
-        .playlist-container::-webkit-scrollbar { width: 5px; }
-        .playlist-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 3px; }
-
-        /* Полный режим */
-        .full-mode { flex-direction: row !important; padding: 25px; }
-        .full-mode .main-view { flex-direction: column !important; flex: 0 0 45%; margin-right: 20px; align-items: center; text-align: center; border-right: 1px solid rgba(255,255,255,0.1); padding-right: 20px; }
-        .full-mode .playlist-container { display: block !important; border: none; }
-        .full-mode .album-art { width: 160px; height: 160px; margin-bottom: 15px; }
-        .full-mode #track-title { font-size: 24px; }
-        .full-mode .control-btn { font-size: 24px; }
-        .full-mode #play-pause-btn { font-size: 48px; }
-
-        /* Стили Дизайна */
-        .design-round { border-radius: 50% !important; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
-        .design-round .main-view { flex-direction: column; align-items: center; justify-content: center; }
-        .design-round .album-art { width: 90px; height: 90px; border-radius: 50%; }
-        .design-round #visualizer, .design-round .playlist-container { display: none !important; }
-        
-        .design-russian { 
-            background: radial-gradient(circle, #3a0000 0%, #000000 100%) !important; 
-            border: 6px solid #B8860B; border-radius: 12px; 
-            box-shadow: inset 0 0 30px #000;
-        }
-        .design-russian * { font-family: 'Ruslan Display', cursive !important; letter-spacing: 1px; }
-        .design-russian #track-title { color: #FFD700; text-shadow: 2px 2px 0 #000; }
-        .design-russian .control-btn { color: #FFD700; }
-        .design-russian .control-btn:hover { color: #fff; text-shadow: 0 0 10px #FFD700; }
-        .design-russian #progress-bar::-webkit-slider-thumb { background: #FF0000; border: 2px solid #FFD700; }
-        .design-russian .album-art { border: 3px solid #B8860B; border-radius: 50%; }
-        .design-russian .playlist-item { color: #FFE4B5; border-bottom: 1px dashed #B8860B; }
-        .design-russian .playlist-item.playing { background: #B8860B; color: #3a0000; }
-        .design-russian.neon { box-shadow: 0 0 25px var(--neon); }
-
-        .design-minimalist { border-radius: 0; border: none; backdrop-filter: none; }
-        .design-minimalist.neon { box-shadow: none !important; filter: drop-shadow(0 0 8px var(--neon)); }
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Roboto+Mono&display=swap');
+        body { font-family: 'Poppins', sans-serif; background-color: #1a1a2e; color: #e0e0e0; display: flex; flex-direction: column; padding: 20px 20px 48px 20px; gap: 30px; min-height: 100vh; margin: 0; box-sizing: border-box; }
+        .main-content { display: flex; flex-grow: 1; gap: 30px; min-height: 0; }
+        .editor-panel, .preview-panel { background-color: #16213e; padding: 25px; border-radius: 15px; border: 1px solid rgba(255, 255, 255, 0.1); overflow-y: auto; display: flex; flex-direction: column; }
+        .editor-panel { width: 40%; } .preview-panel { width: 60%; }
+        h1 { color: #00c6ff; margin: 0 0 20px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 500; }
+        input, select, textarea { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #535c91; background-color: #0f3460; color: #e0e0e0; box-sizing: border-box; }
+        textarea { min-height: 120px; resize: vertical; }
+        input[type="color"] { padding: 0; width: 50px; height: 30px; border: none; }
+        .checkbox-group { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+        #previewFrame { width: 100%; height: 100%; border: 1px solid #535c91; border-radius: 10px; flex-grow: 1; }
+        button { background: linear-gradient(90deg, #00c6ff, #0072ff); color: white; padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; margin-top: 10px; font-weight: 600; }
+        #generated-code { height: 100px; margin-top: 15px; font-family: monospace; color: #a7d129; }
+        .page-footer { position: fixed; bottom: 8px; left: 0; right: 0; text-align: center; font-size: 11px; color: rgba(255,255,255,0.7); pointer-events: none; }
     </style>
 </head>
 <body>
-    <div id="scaleWrapper" class="scale-wrapper">
-        <div id="player" class="player-container">
-            <div class="main-view">
-                <img id="albumArt" class="album-art" src="" alt="Cover">
-                <div class="controls-info">
-                    <div class="track-info">
-                        <p id="trackTitle">Loading...</p>
-                        <p id="trackArtist">...</p>
-                    </div>
-                    <canvas id="visualizer"></canvas>
-                    <div class="progress-container">
-                        <span id="currentTime">0:00</span>
-                        <input type="range" id="progressBar" value="0" step="1">
-                        <span id="totalDuration">0:00</span>
-                    </div>
-                    <div class="player-controls">
-                        <button class="control-btn" id="shuffleBtn"><i class="fas fa-random"></i></button>
-                        <button class="control-btn" id="prevBtn"><i class="fas fa-step-backward"></i></button>
-                        <button class="control-btn" id="playPauseBtn"><i class="fas fa-play-circle"></i></button>
-                        <button class="control-btn" id="nextBtn"><i class="fas fa-step-forward"></i></button>
-                        <button class="control-btn" id="repeatBtn"><i class="fas fa-redo"></i></button>
-                    </div>
-                </div>
+    <div class="main-content">
+        <div class="editor-panel">
+            <h1>Редактор аудиоплеера</h1>
+            <div class="form-group" style="display: none;">
+                <label>Публичная ссылка</label>
+                <input type="url" id="publicUrl" value="https://alinapogudina-png.github.io/audioplayer-for-Miro-2/player.html">
             </div>
-            <div class="playlist-container"><ul id="playlist"></ul></div>
+            <div class="form-group">
+                <label>Дизайн</label>
+                <select id="designStyle">
+                    <option value="standard">Стандартный</option>
+                    <option value="round">Круглый</option>
+                    <option value="russian" selected>Русский (Хохлома)</option>
+                    <option value="minimalist">Минималистичный</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Треки</label>
+                <textarea id="trackLinks" rows="4">https://files.catbox.moe/xk6v0c.mp3 | Пример трека</textarea>
+            </div>
+            <div class="form-group"><label>Обложка</label><input type="url" id="coverUrl" value="https://i.postimg.cc/yxdYB3WT/Untitled-design3.png"></div>
+            <div class="form-group"><label>Цвет фона</label><input type="color" id="mainColor" value="#4B0082"></div>
+            
+            <div class="checkbox-group">
+                <input type="checkbox" id="autoplayToggle">
+                <label for="autoplayToggle" style="margin:0;">Автопереключение треков</label>
+            </div>
+
+            <div class="checkbox-group"><input type="checkbox" id="neonToggle" checked><label>Неон</label><input type="color" id="neonColor" value="#FF00FF"></div>
+            <div class="form-group"><label>Размер</label><select id="playerSize"><option value="compact">Компактный</option><option value="full" selected>Полный</option></select></div>
+            
+            <div class="form-group">
+                <label>Шрифт</label>
+                <select id="playerFont">
+                    <option value="Poppins">Poppins</option>
+                    <option value="Ruslan Display" selected>Ruslan Display (Русский)</option>
+                    <option value="Kelly Slab">Kelly Slab</option>
+                    <option value="Comfortaa">Comfortaa</option>
+                    <option value="Open Sans">Open Sans</option>
+                    <option value="Playfair Display">Playfair Display</option>
+                </select>
+            </div>
+            
+            <button id="generateBtn">Сгенерировать код</button>
+            <textarea id="generated-code" readonly></textarea>
+            <button id="copyBtn">Копировать</button>
+        </div>
+        <div class="preview-panel">
+            <h2>Предпросмотр</h2>
+            <iframe id="previewFrame" src=""></iframe>
         </div>
     </div>
-    <audio id="audioSource" crossorigin="anonymous"></audio>
+    <div class="page-footer">©2026 Alina Pogudina @ELT_workshop</div>
     <script>
-        const qs = (s) => document.querySelector(s);
-        const player = qs('#player'), audio = qs('#audioSource'), scaleWrapper = qs('#scaleWrapper');
-        let tracks=[], curIdx=0, isPlaying=false, isShuffle=false, isRepeat=false, isAutoplay=false, baseW=500, baseH=180;
-        let audioCtx, analyser, dataArray, isVisInit=false;
-
-        function hexToRgba(h, a) {
-            let r=0,g=0,b=0;
-            if(h.length==4){r=parseInt(h[1]+h[1],16);g=parseInt(h[2]+h[2],16);b=parseInt(h[3]+h[3],16);}
-            else if(h.length==7){r=parseInt(h.substring(1,3),16);g=parseInt(h.substring(3,5),16);b=parseInt(h.substring(5,7),16);}
-            return `rgba(${r},${g},${b},${a})`;
-        }
-
-        function fit() {
-            const f = player.classList.contains('design-round') ? 0.9 : 0.96;
-            const s = Math.min(window.innerWidth/baseW, window.innerHeight/baseH) * f;
-            scaleWrapper.style.transform = `scale(${s})`;
-            scaleWrapper.style.width = baseW+'px'; scaleWrapper.style.height = baseH+'px';
-        }
-        window.onresize = fit;
-
-        window.onload = () => {
-            const p = new URLSearchParams(window.location.search);
-            const r = document.documentElement.style;
-            
-            const col = p.get('color')||'#4B0082';
-            r.setProperty('--bg', hexToRgba(col, 0.7));
-            r.setProperty('--font', p.get('font')||'Poppins');
-            r.setProperty('--neon', p.get('neonColor')||'#FF00FF');
-            
-            if(p.get('neon')==='true') player.classList.add('neon');
-            else player.classList.remove('neon');
-
-            const d = p.get('design')||'standard';
-            const sz = p.get('size')||'compact';
-            isAutoplay = p.get('autoplay')==='true';
-
-            player.className = `player-container ${p.get('neon')==='true'?'neon':''}`;
-            if(d !== 'standard') player.classList.add(`design-${d}`);
-            
-            if(d === 'round') { baseW=320; baseH=320; }
-            else if(sz === 'full') { player.classList.add('full-mode'); baseW=800; baseH=400; }
-            else { baseW=500; baseH=180; }
-
-            parseTracks(p.get('tracks'));
-            fit(); setTimeout(fit, 100);
-        };
-
-        function parseTracks(s) {
-            if(!s) return;
-            try {
-                tracks = decodeURIComponent(s).split('|||').filter(Boolean).map(l => {
-                    let [u, n] = l.split('|').map(x=>x.trim());
-                    if(!n) try{n=decodeURIComponent(u.split('/').pop().replace(/\.mp3$/i,''));}catch(e){n="Track";}
-                    return {url:u, name:n};
-                });
-                if(tracks.length){ buildList(); load(0); }
-            } catch(e){}
-        }
-
-        function load(i) {
-            curIdx=i; audio.src=tracks[i].url;
-            qs('#trackTitle').textContent=tracks[i].name; qs('#trackArtist').textContent="Now Playing";
-            qs('#progressBar').value=0; updateList();
-        }
+        const controls = { publicUrl:document.getElementById('publicUrl'), designStyle:document.getElementById('designStyle'), trackLinks:document.getElementById('trackLinks'), coverUrl:document.getElementById('coverUrl'), mainColor:document.getElementById('mainColor'), neonToggle:document.getElementById('neonToggle'), neonColor:document.getElementById('neonColor'), playerSize:document.getElementById('playerSize'), playerFont:document.getElementById('playerFont'), autoplayToggle:document.getElementById('autoplayToggle'), generateBtn:document.getElementById('generateBtn'), copyBtn:document.getElementById('copyBtn'), generatedCode:document.getElementById('generated-code'), previewFrame:document.getElementById('previewFrame') };
         
-        function play() { if(!isVisInit) initVis(); audio.play().then(()=>{isPlaying=true; qs('#playPauseBtn').innerHTML='<i class="fas fa-pause-circle"></i>';}).catch(()=>{}); }
-        function pause() { audio.pause(); isPlaying=false; qs('#playPauseBtn').innerHTML='<i class="fas fa-play-circle"></i>'; }
-        function toggle() { if(tracks.length) isPlaying?pause():play(); }
-        
-        function next() {
-            let n = isShuffle ? Math.floor(Math.random()*tracks.length) : curIdx+1;
-            if(n >= tracks.length && !isRepeat && !isShuffle) { pause(); return; }
-            load(n % tracks.length); play();
+        function update() {
+            const p = new URLSearchParams();
+            p.append('design', controls.designStyle.value);
+            p.append('tracks', encodeURIComponent(controls.trackLinks.value.trim().split('\n').filter(Boolean).map(s=>s.trim()).join('|||')));
+            p.append('cover', controls.coverUrl.value); p.append('color', controls.mainColor.value);
+            p.append('neon', controls.neonToggle.checked); p.append('neonColor', controls.neonColor.value);
+            p.append('size', controls.playerSize.value); p.append('font', controls.playerFont.value);
+            p.append('autoplay', controls.autoplayToggle.checked);
+            controls.previewFrame.src = `${controls.publicUrl.value}?${p.toString()}`;
+            return p.toString();
         }
-        function prev() { load((curIdx-1+tracks.length)%tracks.length); play(); }
-
-        audio.ontimeupdate = () => { if(audio.duration) {
-            qs('#progressBar').value = (audio.currentTime/audio.duration)*100;
-            qs('#currentTime').textContent = fmt(audio.currentTime);
-            qs('#totalDuration').textContent = fmt(audio.duration);
-        }};
-        qs('#progressBar').oninput = (e) => audio.currentTime = (e.target.value/100)*audio.duration;
-        audio.onended = () => { if(isRepeat){audio.currentTime=0; play();} else if(isAutoplay){next();} else {pause();} };
-
-        function fmt(s) { return `${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,'0')}`; }
-        function buildList() {
-            qs('#playlist').innerHTML = tracks.map((t,i)=>`<li class="playlist-item" onclick="load(${i});play()">${t.name}</li>`).join('');
+        function gen() {
+            let w='500', h='180';
+            if(controls.designStyle.value==='round'){w='350';h='350';} else if(controls.playerSize.value==='full'){w='800';h='400';}
+            controls.generatedCode.value = `<iframe src="${controls.publicUrl.value}?${update().split('&t=')[0]}" width="${w}" height="${h}" frameborder="0" allowfullscreen allowtransparency style="border-radius:20px;background:transparent;"></iframe>`;
         }
-        function updateList() {
-            document.querySelectorAll('.playlist-item').forEach((el,i) => el.classList.toggle('playing', i===curIdx));
-        }
-
-        qs('#playPauseBtn').onclick=toggle; qs('#nextBtn').onclick=next; qs('#prevBtn').onclick=prev;
-        qs('#shuffleBtn').onclick=()=>{isShuffle=!isShuffle; qs('#shuffleBtn').classList.toggle('active');};
-        qs('#repeatBtn').onclick=()=>{isRepeat=!isRepeat; qs('#repeatBtn').classList.toggle('active');};
-
-        function initVis() {
-            try {
-                audioCtx = new (window.AudioContext||window.webkitAudioContext)();
-                analyser = audioCtx.createAnalyser();
-                const src = audioCtx.createMediaElementSource(audio);
-                src.connect(analyser); analyser.connect(audioCtx.destination);
-                analyser.fftSize=64; dataArray=new Uint8Array(analyser.frequencyBinCount);
-                isVisInit=true; draw();
-            } catch(e){}
-        }
-        function draw() {
-            requestAnimationFrame(draw); if(!isPlaying) return;
-            analyser.getByteFrequencyData(dataArray);
-            const ctx = qs('#visualizer').getContext('2d');
-            ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
-            const w = ctx.canvas.width/dataArray.length*2;
-            ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
-            for(let i=0; i<dataArray.length; i++) {
-                ctx.fillRect(i*(w+1), ctx.canvas.height - (dataArray[i]/255*ctx.canvas.height), w, ctx.canvas.height);
-            }
-        }
+        Object.values(controls).forEach(c => c.tagName && c.addEventListener(c.tagName==='BUTTON'?'click':'input', c===controls.generateBtn?gen:c===controls.copyBtn?()=>{controls.generatedCode.select();document.execCommand('copy')}:update));
+        controls.designStyle.addEventListener('change', () => {
+            if (controls.designStyle.value === 'round') controls.playerSize.disabled = true;
+            else controls.playerSize.disabled = false;
+            update();
+        });
+        update();
     </script>
 </body>
 </html>
