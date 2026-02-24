@@ -42,9 +42,7 @@
             </div>
             <div class="form-group">
                 <label>Треки</label>
-                <textarea id="trackLinks" rows="4">https://files.catbox.moe/xk6v0c.mp3 | Пример трека
-https://files.catbox.moe/d36fio.mp3
-https://files.catbox.moe/0srhsb.mp3</textarea>
+                <textarea id="trackLinks" rows="4">https://files.catbox.moe/xk6v0c.mp3 | Пример трека</textarea>
             </div>
             <div class="form-group"><label>Обложка</label><input type="url" id="coverUrl" value="https://i.postimg.cc/yxdYB3WT/Untitled-design3.png"></div>
             <div class="form-group"><label>Цвет фона</label><input type="color" id="mainColor" value="#4B0082"></div>
@@ -55,9 +53,51 @@ https://files.catbox.moe/0srhsb.mp3</textarea>
             </div>
 
             <div class="checkbox-group"><input type="checkbox" id="neonToggle" checked><label>Неон</label><input type="color" id="neonColor" value="#FF00FF"></div>
-            <div class="form-group"><label>Размер</label><select id="playerSize"><option value="compact">Компактный</option><option value="full" selected>Полный (с плейлистом)</option></select></div>
+            <div class="form-group"><label>Размер</label><select id="playerSize"><option value="compact">Компактный</option><option value="full" selected>Полный</option></select></div>
             
-            <div class
+            <div class="form-group">
+                <label>Шрифт</label>
+                <select id="playerFont">
+                    <option value="Poppins">Poppins</option>
+                    <option value="Ruslan Display" selected>Ruslan Display (Русский)</option>
+                    <option value="Kelly Slab">Kelly Slab</option>
+                    <option value="Comfortaa">Comfortaa</option>
+                    <option value="Open Sans">Open Sans</option>
+                    <option value="Playfair Display">Playfair Display</option>
+                </select>
+            </div>
+            
+            <button id="generateBtn">Сгенерировать код</button>
+            <textarea id="generated-code" readonly></textarea>
+            <button id="copyBtn">Копировать</button>
+        </div>
+        <div class="preview-panel">
+            <h2>Предпросмотр</h2>
+            <iframe id="previewFrame" src=""></iframe>
+        </div>
+    </div>
+    <div class="page-footer">©2026 Alina Pogudina @ELT_workshop</div>
+    <script>
+        const controls = { publicUrl:document.getElementById('publicUrl'), designStyle:document.getElementById('designStyle'), trackLinks:document.getElementById('trackLinks'), coverUrl:document.getElementById('coverUrl'), mainColor:document.getElementById('mainColor'), neonToggle:document.getElementById('neonToggle'), neonColor:document.getElementById('neonColor'), playerSize:document.getElementById('playerSize'), playerFont:document.getElementById('playerFont'), autoplayToggle:document.getElementById('autoplayToggle'), generateBtn:document.getElementById('generateBtn'), copyBtn:document.getElementById('copyBtn'), generatedCode:document.getElementById('generated-code'), previewFrame:document.getElementById('previewFrame') };
+        
+        function update() {
+            const p = new URLSearchParams();
+            p.append('design', controls.designStyle.value);
+            p.append('tracks', encodeURIComponent(controls.trackLinks.value.trim().split('\n').filter(Boolean).map(s=>s.trim()).join('|||')));
+            p.append('cover', controls.coverUrl.value); p.append('color', controls.mainColor.value);
+            p.append('neon', controls.neonToggle.checked); p.append('neonColor', controls.neonColor.value);
+            p.append('size', controls.playerSize.value); p.append('font', controls.playerFont.value);
+            p.append('autoplay', controls.autoplayToggle.checked);
+            controls.previewFrame.src = `${controls.publicUrl.value}?${p.toString()}`;
+            return p.toString();
+        }
+        function gen() {
+            let w='500', h='180';
+            if(controls.designStyle.value==='round'){w='350';h='350';} else if(controls.playerSize.value==='full'){w='800';h='400';}
+            controls.generatedCode.value = `<iframe src="${controls.publicUrl.value}?${update().split('&t=')[0]}" width="${w}" height="${h}" frameborder="0" allowfullscreen allowtransparency style="border-radius:20px;background:transparent;"></iframe>`;
+        }
+        Object.values(controls).forEach(c => c.tagName && c.addEventListener(c.tagName==='BUTTON'?'click':'input', c===controls.generateBtn?gen:c===controls.copyBtn?()=>{controls.generatedCode.select();document.execCommand('copy')}:update));
+        controls.designStyle.addEventListener('change', () => {
             if (controls.designStyle.value === 'round') controls.playerSize.disabled = true;
             else controls.playerSize.disabled = false;
             update();
