@@ -3,274 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Редактор аудиоплеера для Genially</title>
+    <title>Редактор аудиоплеера</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Roboto+Mono&display=swap');
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #1a1a2e;
-            color: #e0e0e0;
-            display: flex;
-            padding: 20px;
-            gap: 30px;
-            height: 100vh;
-            margin: 0;
-            box-sizing: border-box;
-        }
-        .editor-panel, .preview-panel {
-            background-color: #16213e;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .editor-panel {
-            width: 40%;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-        }
-        .preview-panel {
-            width: 60%;
-            display: flex;
-            flex-direction: column;
-        }
-        h1, h2 {
-            color: #00c6ff;
-            text-shadow: 0 0 5px #00c6ff;
-            margin-top: 0;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-        input[type="url"], input[type="text"], select, textarea {
-            width: 100%;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #535c91;
-            background-color: #0f3460;
-            color: #e0e0e0;
-            box-sizing: border-box;
-        }
-        textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-        input[type="color"] {
-            padding: 0;
-            border: none;
-            width: 50px;
-            height: 30px;
-            vertical-align: middle;
-            margin-left: 10px;
-            border-radius: 5px;
-        }
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-        }
-        #previewFrame {
-            width: 100%;
-            height: 100%;
-            border: 1px solid #535c91;
-            border-radius: 10px;
-            transition: all 0.3s ease;
-        }
-        button {
-            background: linear-gradient(90deg, #00c6ff, #0072ff);
-            color: white;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0, 198, 255, 0.4);
-        }
-        #generated-code {
-            width: 100%;
-            height: 150px;
-            margin-top: 15px;
-            font-family: 'Roboto Mono', monospace;
-            background-color: #0f3460;
-            color: #a7d129;
-            border: 1px solid #535c91;
-            border-radius: 8px;
-            padding: 10px;
-            resize: vertical;
-        }
-        #copyBtn {
-            margin-top: 10px;
-            background: #e94560;
-        }
-        #copyBtn:hover {
-             box-shadow: 0 4px 15px rgba(233, 69, 96, 0.4);
-        }
-        small {
-            font-size: 12px;
-            opacity: 0.7;
-            margin-top: 5px;
-            display: block;
-        }
+        body { font-family: 'Poppins', sans-serif; background-color: #1a1a2e; color: #e0e0e0; display: flex; flex-direction: column; padding: 20px 20px 48px 20px; gap: 30px; min-height: 100vh; margin: 0; box-sizing: border-box; }
+        .main-content { display: flex; flex-grow: 1; gap: 30px; min-height: 0; }
+        .editor-panel, .preview-panel { background-color: #16213e; padding: 25px; border-radius: 15px; border: 1px solid rgba(255, 255, 255, 0.1); overflow-y: auto; display: flex; flex-direction: column; }
+        .editor-panel { width: 40%; } .preview-panel { width: 60%; }
+        h1 { color: #00c6ff; margin: 0 0 20px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 500; }
+        input, select, textarea { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #535c91; background-color: #0f3460; color: #e0e0e0; box-sizing: border-box; }
+        input[type="color"] { padding: 0; width: 50px; height: 30px; border: none; }
+        .checkbox-group { display: flex; align-items: center; gap: 10px; }
+        #previewFrame { width: 100%; height: 100%; border: 1px solid #535c91; border-radius: 10px; flex-grow: 1; }
+        button { background: linear-gradient(90deg, #00c6ff, #0072ff); color: white; padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; margin-top: 10px; font-weight: 600; }
+        #generated-code { height: 100px; margin-top: 15px; font-family: monospace; color: #a7d129; }
+        .page-footer { position: fixed; bottom: 8px; left: 0; right: 0; text-align: center; font-size: 11px; color: rgba(255,255,255,0.7); pointer-events: none; }
     </style>
 </head>
 <body>
-
-    <div class="editor-panel">
-        <h1>Редактор аудиоплеера</h1>
-
-        <div class="form-group">
-            <label for="publicUrl">Публичная ссылка на player.html</label>
-            <input type="url" id="publicUrl" placeholder="https://your-user.github.io/repo-name/player.html">
-            <small>Обязательно для вставки в Genially и Miro. Загрузите файлы на хостинг и вставьте ссылку сюда.</small>
+    <div class="main-content">
+        <div class="editor-panel">
+            <h1>Редактор аудиоплеера</h1>
+            <div class="form-group" style="display: none;">
+                <label>Публичная ссылка</label>
+                <input type="url" id="publicUrl" value="https://alinapogudina-png.github.io/audioplayer-for-Miro-2/player.html">
+            </div>
+            <div class="form-group">
+                <label>Дизайн</label>
+                <select id="designStyle">
+                    <option value="standard">Стандартный</option>
+                    <option value="round">Круглый</option>
+                    <option value="russian">Русский узор</option>
+                    <option value="minimalist">Минималистичный</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Треки</label>
+                <textarea id="trackLinks" rows="4">https://files.catbox.moe/xk6v0c.mp3 | Пример трека</textarea>
+            </div>
+            <div class="form-group"><label>Обложка</label><input type="url" id="coverUrl" value="https://i.postimg.cc/yxdYB3WT/Untitled-design3.png"></div>
+            <div class="form-group"><label>Цвет фона</label><input type="color" id="mainColor" value="#4B0082"></div>
+            <div class="checkbox-group"><input type="checkbox" id="neonToggle" checked><label>Неон</label><input type="color" id="neonColor" value="#FF00FF"></div>
+            <div class="form-group"><label>Размер</label><select id="playerSize"><option value="compact">Компактный</option><option value="full">Полный</option></select></div>
+            <div class="form-group"><label>Шрифт</label><select id="playerFont"><option value="Poppins">Poppins</option><option value="Caveat">Caveat</option><option value="Playfair Display">Playfair</option></select></div>
+            <button id="generateBtn">Сгенерировать код</button>
+            <textarea id="generated-code" readonly></textarea>
+            <button id="copyBtn">Копировать</button>
         </div>
-
-        <div class="form-group">
-            <label for="trackLinks">Ссылки на ваши треки</label>
-            <textarea id="trackLinks" rows="6" placeholder="Вставьте сюда одну или несколько ссылок на mp3&#10;Можно с названиями через |"></textarea>
-            <small>Каждая строка — один трек:<br>
-            <code>https://files.catbox.moe/abcde.mp3</code><br>
-            <code>https://files.catbox.moe/qwert.mp3 | Любимая песня</code>
-            </small>
+        <div class="preview-panel">
+            <h2>Предпросмотр</h2>
+            <iframe id="previewFrame" src=""></iframe>
         </div>
-
-        <div class="form-group">
-            <label for="coverUrl">Ссылка на обложку плеера</label>
-            <input type="url" id="coverUrl" placeholder="https://example.com/cover.jpg" value="https://i.postimg.cc/yxdYB3WT/Untitled-design3.png">
-        </div>
-
-        <div class="form-group">
-            <label for="mainColor">Основной цвет плеера</label>
-            <input type="color" id="mainColor" value="#9933FF">
-        </div>
-        
-        <div class="form-group checkbox-group">
-            <input type="checkbox" id="neonToggle" checked>
-            <label for="neonToggle" style="margin-left: 10px; margin-bottom: 0;">Неоновая подсветка</label>
-            <input type="color" id="neonColor" value="#FF00FF">
-        </div>
-
-        <div class="form-group">
-            <label for="playerSize">Размер плеера</label>
-            <select id="playerSize">
-                <option value="compact" selected>Компактный</option>
-                <option value="full">Полный (с плейлистом)</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="playerFont">Шрифт</label>
-            <select id="playerFont">
-                <option value="Poppins">Poppins</option>
-                <option value="Roboto Mono">Roboto Mono</option>
-                <option value="Verdana" selected>Verdana</option>
-                <option value="Arial">Arial</option>
-                <option value="Montserrat">Montserrat</option>
-                <option value="Lato">Lato</option>
-                <option value="Oswald">Oswald</option>
-                <option value="Nunito">Nunito</option>
-                <option value="Playfair Display">Playfair Display</option>
-                <option value="Merriweather">Merriweather</option>
-                <option value="Caveat">Caveat (рукописный)</option>
-                <option value="Press Start 2P">Press Start 2P (пиксельный)</option>
-            </select>
-        </div>
-        
-        <button id="generateBtn">Сгенерировать код</button>
-        <textarea id="generated-code" readonly placeholder="Здесь появится ваш iframe код..."></textarea>
-        <button id="copyBtn">Копировать код</button>
-
     </div>
-
-    <div class="preview-panel">
-        <h2>Предпросмотр</h2>
-        <iframe id="previewFrame" src="" frameborder="0"></iframe>
-    </div>
-
+    <div class="page-footer">©2026 Alina Pogudina @ELT_workshop</div>
     <script>
-        const controls = {
-            publicUrl: document.getElementById('publicUrl'),
-            trackLinks: document.getElementById('trackLinks'),
-            coverUrl: document.getElementById('coverUrl'),
-            mainColor: document.getElementById('mainColor'),
-            neonToggle: document.getElementById('neonToggle'),
-            neonColor: document.getElementById('neonColor'),
-            playerSize: document.getElementById('playerSize'),
-            playerFont: document.getElementById('playerFont'),
-            generateBtn: document.getElementById('generateBtn'),
-            copyBtn: document.getElementById('copyBtn'),
-            generatedCode: document.getElementById('generated-code'),
-            previewFrame: document.getElementById('previewFrame')
-        };
-
-        function updatePreview() {
-            const params = new URLSearchParams();
-
-            // Список треков: склеиваем все строки через |||
-            const trackLinksRaw = controls.trackLinks.value.trim().split('\n')
-                .filter(Boolean)
-                .map(s => s.trim())
-                .join('|||');
-            params.append('tracks', encodeURIComponent(trackLinksRaw));
-            params.append('cover', controls.coverUrl.value);
-            params.append('color', controls.mainColor.value);
-            params.append('neon', controls.neonToggle.checked);
-            params.append('neonColor', controls.neonColor.value);
-            params.append('size', controls.playerSize.value);
-            params.append('font', controls.playerFont.value);
-
-            const previewUrl = `player.html?${params.toString()}`;
-            controls.previewFrame.src = previewUrl;
-            return params.toString();
+        const controls = { publicUrl:document.getElementById('publicUrl'), designStyle:document.getElementById('designStyle'), trackLinks:document.getElementById('trackLinks'), coverUrl:document.getElementById('coverUrl'), mainColor:document.getElementById('mainColor'), neonToggle:document.getElementById('neonToggle'), neonColor:document.getElementById('neonColor'), playerSize:document.getElementById('playerSize'), playerFont:document.getElementById('playerFont'), generateBtn:document.getElementById('generateBtn'), copyBtn:document.getElementById('copyBtn'), generatedCode:document.getElementById('generated-code'), previewFrame:document.getElementById('previewFrame') };
+        function update() {
+            const p = new URLSearchParams();
+            p.append('design', controls.designStyle.value);
+            p.append('tracks', encodeURIComponent(controls.trackLinks.value.trim().split('\n').filter(Boolean).map(s=>s.trim()).join('|||')));
+            p.append('cover', controls.coverUrl.value); p.append('color', controls.mainColor.value);
+            p.append('neon', controls.neonToggle.checked); p.append('neonColor', controls.neonColor.value);
+            p.append('size', controls.playerSize.value); p.append('font', controls.playerFont.value);
+            // Добавляем timestamp для сброса кэша при каждом изменении
+            controls.previewFrame.src = `${controls.publicUrl.value}?${p.toString()}&t=${Date.now()}`;
+            return p.toString();
         }
-        
-        function generateCode() {
-            const paramsString = updatePreview();
-            const baseUrl = controls.publicUrl.value;
-            if (!baseUrl) {
-                alert('Пожалуйста, укажите "Публичную ссылку на player.html", чтобы сгенерировать код для Genially/Miro.');
-                controls.generatedCode.value = "Ошибка: не указана публичная ссылка на player.html";
-                return;
-            }
-            const playerUrl = `${baseUrl}?${paramsString}`;
-            const width = controls.playerSize.value === 'full' ? '800' : '500';
-            const height = controls.playerSize.value === 'full' ? '400' : '180';
-            const iframeCode = `<iframe src="${playerUrl}" width="${width}" height="${height}" frameborder="0" allowfullscreen="true" allow="autoplay" style="border-radius: 20px;"></iframe>`;
-            controls.generatedCode.value = iframeCode;
+        function gen() {
+            let w='500', h='180';
+            if(controls.designStyle.value==='round'){w='320';h='320';} else if(controls.playerSize.value==='full'){w='800';h='400';}
+            controls.generatedCode.value = `<iframe src="${controls.publicUrl.value}?${update().split('&t=')[0]}" width="${w}" height="${h}" frameborder="0" allowfullscreen allowtransparency style="border-radius:20px;background:transparent;"></iframe>`;
         }
-
-        function copyCode() {
-            if (controls.generatedCode.value) {
-                controls.generatedCode.select();
-                document.execCommand('copy');
-                alert('Код скопирован в буфер обмена!');
-            }
-        }
-
-        // Event Listeners
-        Object.values(controls).forEach(element => {
-            if (element.tagName === 'INPUT' || element.tagName === 'SELECT' || element.tagName === 'TEXTAREA') {
-                element.addEventListener('input', updatePreview);
-            }
-        });
-        controls.neonToggle.addEventListener('change', () => {
-             controls.neonColor.style.display = controls.neonToggle.checked ? 'inline-block' : 'none';
-             updatePreview();
-        });
-        controls.generateBtn.addEventListener('click', generateCode);
-        controls.copyBtn.addEventListener('click', copyCode);
-
-        // Initial load
-        updatePreview();
+        Object.values(controls).forEach(c => c.tagName && c.addEventListener(c.tagName==='BUTTON'?'click':'input', c===controls.generateBtn?gen:c===controls.copyBtn?()=>{controls.generatedCode.select();document.execCommand('copy')}:update));
+        update();
     </script>
 </body>
 </html>
