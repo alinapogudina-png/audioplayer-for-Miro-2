@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Audio Player</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Подключаем шрифты с поддержкой кириллицы -->
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Kelly+Slab&family=Lobster&family=Merriweather:wght@400;700&family=Montserrat:wght@400;700&family=Nunito:wght@400;700&family=Open+Sans:wght@400;700&family=Pacifico&family=Playfair+Display:wght@400;700&family=Poppins:wght@400;600&family=Press+Start+2P&family=Roboto+Mono&family=Ruslan+Display&family=Underdog&display=swap&subset=cyrillic" rel="stylesheet">
     
     <style>
@@ -26,12 +27,12 @@
             overflow: hidden;
         }
 
+        /* Обертка для масштабирования без обрезания */
         .scale-wrapper {
             transform-origin: center center;
             display: flex; align-items: center; justify-content: center;
         }
 
-        /* --- Базовый контейнер --- */
         .player-container {
             width: 100%; height: 100%;
             display: flex;
@@ -42,7 +43,7 @@
             color: #fff;
             position: relative;
             overflow: hidden;
-            transition: all 0.3s ease;
+            transition: background-color 0.3s ease;
             padding: 15px;
             border-radius: 20px;
         }
@@ -51,16 +52,32 @@
             box-shadow: 0 0 10px var(--neon-color), 0 0 25px var(--neon-color), 0 0 50px var(--neon-color);
         }
 
-        /* --- КОМПАКТНЫЙ РЕЖИМ --- */
-        .main-view { display: flex; width: 100%; height: 100%; gap: 15px; flex-grow: 1; min-height: 0; }
-        .controls-info { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; gap: 5px; }
+        /* Компактный режим (строка) */
+        .player-container.compact { flex-direction: row; }
+        .player-container.compact .main-view { flex-direction: row; }
+        
+        /* Полный режим (колонка) */
+        .player-container.full { flex-direction: column; }
+        .player-container.full .main-view { flex-direction: column; }
+
+        .main-view {
+            display: flex; width: 100%; height: 100%; gap: 15px; flex-grow: 1; min-height: 0;
+        }
+
+        .controls-info {
+            flex-grow: 1; display: flex; flex-direction: column; justify-content: center; gap: 5px;
+            min-width: 0;
+        }
         
         .album-art {
             width: 140px; height: 140px; border-radius: 15px; object-fit: cover; flex-shrink: 0;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            background-color: #000; /* Фон если картинка прозрачная */
+            background-color: #000;
         }
-        .track-info { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-shadow: 0 0 5px rgba(0,0,0,0.5); margin-bottom: 2px;}
+        /* В полном режиме обложка по центру */
+        .player-container.full .album-art { align-self: center; width: 120px; height: 120px; }
+
+        .track-info { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-shadow: 0 0 5px rgba(0,0,0,0.5); margin-bottom: 5px;}
         #track-title { font-size: 20px; font-weight: 600; margin: 0; }
         #track-artist { font-size: 14px; opacity: 0.8; margin: 0; }
         
@@ -82,149 +99,28 @@
         #visualizer { width: 100%; height: 30px; opacity: 0.6; }
         
         .playlist-container { 
-            display: none;
-            overflow-y: auto; 
-            margin-top: 10px; 
-            width: 100%; 
-            border-top: 1px solid rgba(255,255,255,0.1); 
-            padding-top: 5px;
-            flex: 1 1 0; 
-            min-height: 0;
+            display: none; /* Скрыт в компактном */
+            overflow-y: auto; margin-top: 15px; width: 100%; 
+            border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;
+            flex-grow: 1; min-height: 0;
         }
+        .player-container.full .playlist-container { display: block; }
+
         #playlist { list-style: none; padding: 0; margin: 0; }
         .playlist-item { padding: 8px 10px; border-radius: 5px; font-size: 13px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
         .playlist-item:hover { background-color: rgba(255,255,255,0.1); }
         .playlist-item.playing { background-color: var(--player-accent-color); color: #fff; font-weight: bold; }
-
-        /* Скроллбары */
+        
+        /* Скроллбар */
         .playlist-container::-webkit-scrollbar { width: 6px; }
-        .playlist-container::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); border-radius: 3px; }
         .playlist-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 3px; }
-        .design-russian .playlist-container::-webkit-scrollbar-thumb { background: #B8860B; }
-
-        /* === РЕЖИМ FULL MODE (ИСПРАВЛЕННЫЕ ОТСТУПЫ) === */
-        
-        .player-container.full-mode {
-            flex-direction: row !important;
-            align-items: stretch;
-            padding: 20px; /* Уменьшил padding, чтобы влезло */
-        }
-        
-        .player-container.full-mode .main-view {
-            flex-direction: column !important;
-            flex: 0 0 42%; /* Чуть уже левая колонка */
-            margin-right: 20px;
-            justify-content: center; /* Центрирование по вертикали */
-            align-items: center;
-            text-align: center;
-            border-right: 1px solid rgba(255,255,255,0.1);
-            padding-right: 20px;
-            gap: 10px; /* Уменьшил gap между элементами */
-        }
-        
-        .player-container.full-mode .playlist-container {
-            display: block !important;
-            flex: 1;
-            margin-top: 0;
-            border-top: none;
-            padding-top: 0;
-            height: 100%;
-        }
-
-        /* Настройка размеров для Full Mode, чтобы кнопки не улетали */
-        .player-container.full-mode .album-art {
-            width: 150px; height: 150px; /* Чуть меньше */
-            margin-bottom: 10px; /* Меньше отступ */
-            box-shadow: 0 8px 30px rgba(0,0,0,0.5);
-        }
-        .player-container.full-mode .track-info { margin-bottom: 15px; width: 100%; }
-        .player-container.full-mode #track-title { font-size: 24px; margin-bottom: 2px; white-space: normal; line-height: 1.2; max-height: 60px; overflow: hidden; }
-        .player-container.full-mode #track-artist { font-size: 16px; margin-bottom: 5px; }
-        
-        /* Поднимаем кнопки */
-        .player-container.full-mode .player-controls { margin-top: 0; width: 100%; }
-        .player-container.full-mode .control-btn { font-size: 24px; margin: 0 8px; }
-        .player-container.full-mode #play-pause-btn { font-size: 50px; }
-        .player-container.full-mode .progress-container { margin: 10px 0 15px 0; width: 100%; }
-        
-        .player-container.full-mode .playlist-item { font-size: 15px; padding: 10px; }
-
-
-        /* === ДИЗАЙНЫ === */
-
-        /* 1. Стандарт */
-        .player-container.design-standard { }
-
-        /* 2. Круглый */
-        .player-container.design-round {
-            border-radius: 50% !important;
-            flex-direction: column;
-            align-items: center; justify-content: center; text-align: center; padding: 20px;
-        }
-        .design-round .main-view { flex-direction: column; align-items: center; justify-content: center; gap: 8px; flex: 1 1 auto;}
-        .design-round .album-art { width: 90px; height: 90px; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.4); } 
-        .design-round #visualizer, .design-round .playlist-container { display: none !important; }
-        .design-round .progress-container { width: 70%; justify-content: center; margin: 2px 0; }
-        .design-round .player-controls { gap: 10px; margin-top: 2px; }
-        .design-round #track-title { font-size: 16px; margin-top: 5px; }
-        .design-round #track-artist { font-size: 12px; }
-
-        /* 3. Русский стиль (ИСПРАВЛЕНЫ ШРИФТЫ ИКОНОК) */
-        .player-container.design-russian {
-            background: radial-gradient(circle at center, #3a0000 0%, #000000 100%) !important;
-            border: 6px solid #B8860B;
-            border-radius: 12px;
-            box-shadow: inset 0 0 30px #000, 0 10px 25px rgba(0,0,0,0.6);
-        }
-        .player-container.design-russian::before {
-            content: ''; position: absolute; top: 5px; left: 5px; right: 5px; bottom: 5px;
-            border: 2px solid #FFD700; border-radius: 6px; pointer-events: none; opacity: 0.5; z-index: 0;
-        }
-        .design-russian * { z-index: 1; }
-        
-        .design-russian { font-family: 'Ruslan Display', cursive !important; }
-        
-        /* ВАЖНО: Принудительно возвращаем шрифт FontAwesome для иконок, иначе они будут буквами */
-        .design-russian .fas, .design-russian .fa, .design-russian .control-btn i {
-            font-family: "Font Awesome 6 Free" !important;
-            font-weight: 900;
-            font-style: normal;
-        }
-
-        .design-russian #track-title { color: #FFD700; text-shadow: 2px 2px 0px #000; letter-spacing: 1px; }
-        .design-russian #track-artist { color: #FF6347; font-family: 'Playfair Display', serif; }
-        
-        .design-russian .control-btn { color: #FFD700; opacity: 0.9; }
-        .design-russian .control-btn:hover { color: #fff; text-shadow: 0 0 10px #FFD700; transform: scale(1.15); }
-        .design-russian #progress-bar::-webkit-slider-thumb { background: #FF0000; border: 2px solid #FFD700; }
-        .design-russian .album-art { border: 3px solid #B8860B; border-radius: 50%; }
-        
-        .design-russian.neon { box-shadow: 0 0 30px var(--neon-color); }
-        
-        .design-russian .playlist-container { border-top: 2px solid #B8860B; }
-        .design-russian.full-mode .main-view { border-right: 2px solid #B8860B; }
-        .design-russian.full-mode .playlist-container { border-top: none; }
-        
-        .design-russian .playlist-item { color: #FFE4B5; font-family: 'Playfair Display', serif; border-bottom: 1px dashed rgba(184, 134, 11, 0.3); }
-        .design-russian .playlist-item:hover { background-color: rgba(184, 134, 11, 0.2); }
-        .design-russian .playlist-item.playing { background-color: #B8860B; color: #3a0000; font-family: 'Ruslan Display'; }
-
-        /* 4. Минимализм */
-        .player-container.design-minimalist {
-            border-radius: 8px; border: none; backdrop-filter: none; box-shadow: none;
-        }
-        .design-minimalist.neon { box-shadow: none !important; filter: drop-shadow(0 0 8px var(--neon-color)); }
-        .design-minimalist .album-art { border-radius: 4px; box-shadow: none; }
-        .design-minimalist .control-btn { opacity: 0.7; }
-        .design-minimalist .control-btn:hover { opacity: 1; transform: none; }
     </style>
 </head>
 <body>
     <div id="scaleWrapper" class="scale-wrapper">
-        <div id="player" class="player-container">
+        <div id="player" class="player-container compact">
             <div class="main-view">
-                <!-- Добавлен onerror для починки сломанных обложек -->
-                <img id="albumArt" class="album-art" src="" alt="Cover" onerror="this.src='https://via.placeholder.com/150/000000/FFFFFF/?text=Music'">
+                <img id="albumArt" class="album-art" src="" alt="Art" onerror="this.style.display='none'">
                 <div class="controls-info">
                     <div class="track-info">
                         <p id="trackTitle">Loading...</p>
@@ -270,7 +166,7 @@
         const canvas = document.getElementById('visualizer');
         const ctx = canvas.getContext('2d');
 
-        let tracks = [], currentTrackIdx = 0, isPlaying = false, isShuffle = false, isRepeat = false, isAutoplay = false;
+        let tracks = [], currentTrackIdx = 0, isPlaying = false, isShuffle = false, isRepeat = false;
         let audioCtx, analyser, source, dataArray, isVisualizerInit = false;
         let baseW = 500, baseH = 180;
 
@@ -281,10 +177,10 @@
             return `rgba(${r},${g},${b},${alpha})`;
         }
 
-        // --- Масштабирование ---
+        // Надежное масштабирование
         function fitToScreen() {
-            const factor = player.classList.contains('design-round') ? 0.9 : 0.96;
-            const scale = Math.min(window.innerWidth / baseW, window.innerHeight / baseH) * factor;
+            // Оставляем 4% отступа (0.96), чтобы тени не резались
+            const scale = Math.min(window.innerWidth / baseW, window.innerHeight / baseH) * 0.96;
             scaleWrapper.style.width = baseW + 'px';
             scaleWrapper.style.height = baseH + 'px';
             scaleWrapper.style.transform = `scale(${scale})`;
@@ -301,18 +197,17 @@
 
         function applySettings(params) {
             const root = document.documentElement;
-            const design = params.get('design') || 'standard';
             const size = params.get('size') || 'compact';
             const color = params.get('color') || '#4B0082';
             
-            isAutoplay = params.get('autoplay') === 'true';
-
+            // Цвет
             const rgbaColor = hexToRgba(color, 0.75);
             root.style.setProperty('--player-bg-color-dynamic', rgbaColor);
-            player.style.backgroundColor = rgbaColor;
-
+            
+            // Шрифт
             root.style.setProperty('--font-family', params.get('font') || 'Poppins');
 
+            // Неон
             if (params.get('neon') === 'true') {
                 player.classList.add('neon');
                 root.style.setProperty('--neon-color', params.get('neonColor') || '#FF00FF');
@@ -320,36 +215,20 @@
                 player.classList.remove('neon');
             }
 
-            player.classList.remove('design-standard', 'design-round', 'design-russian', 'design-minimalist', 'compact', 'full-mode');
-
-            if (design === 'round') {
-                player.classList.add('design-round');
-                baseW = 320; baseH = 320; 
-            } 
-            else if (design === 'russian') {
-                player.classList.add('design-russian');
-                setupStandardSize(size);
-            } 
-            else if (design === 'minimalist') {
-                player.classList.add('design-minimalist');
-                setupStandardSize(size);
-            } 
-            else {
-                player.classList.add('design-standard');
-                setupStandardSize(size);
+            // Размер
+            player.classList.remove('compact', 'full');
+            if (size === 'full') {
+                player.classList.add('full');
+                baseW = 800; baseH = 400;
+            } else {
+                player.classList.add('compact');
+                baseW = 500; baseH = 180;
             }
 
-            function setupStandardSize(s) {
-                if (s === 'full') {
-                    player.classList.add('full-mode');
-                    baseW = 800; baseH = 400;
-                } else {
-                    baseW = 500; baseH = 180;
-                }
-            }
-
-            // Устанавливаем обложку (onerror сработает если она битая)
             albumArt.src = params.get('cover') || 'https://via.placeholder.com/150';
+            // Если картинка не загрузится, включится display:none из html
+            albumArt.style.display = 'block'; 
+            
             fitToScreen();
         }
 
@@ -379,10 +258,7 @@
         function togglePlay() { if(tracks.length) isPlaying?pauseTrack():playTrack(); }
         
         function nextTrack() {
-            let nextIdx = currentTrackIdx;
-            if (isShuffle) nextIdx = Math.floor(Math.random()*tracks.length);
-            else nextIdx = (currentTrackIdx + 1);
-
+            let nextIdx = isShuffle ? Math.floor(Math.random()*tracks.length) : currentTrackIdx + 1;
             if (nextIdx >= tracks.length && !isRepeat && !isShuffle) { pauseTrack(); return; }
             currentTrackIdx = nextIdx % tracks.length;
             loadTrack(currentTrackIdx); playTrack();
@@ -395,7 +271,6 @@
         
         audio.addEventListener('ended', () => { 
             if(isRepeat) { audio.currentTime=0; playTrack(); } 
-            else if (isAutoplay) { nextTrack(); } 
             else { isPlaying = false; playPauseBtn.innerHTML='<i class="fas fa-play-circle"></i>'; }
         });
         
