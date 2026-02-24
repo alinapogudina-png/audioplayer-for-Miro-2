@@ -51,7 +51,11 @@
             box-shadow: 0 0 10px var(--neon-color), 0 0 25px var(--neon-color), 0 0 50px var(--neon-color);
         }
 
-        .main-view { display: flex; width: 100%; height: 100%; gap: 15px; flex-grow: 1; min-height: 0; }
+        /* Верхняя часть: Обложка и управление */
+        .main-view { 
+            display: flex; width: 100%; gap: 15px; 
+            flex: 0 0 auto; /* Не сжиматься и не растягиваться */
+        }
         .controls-info { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; gap: 5px; }
         
         .album-art {
@@ -79,47 +83,47 @@
         
         #visualizer { width: 100%; height: 30px; opacity: 0.6; }
         
+        /* Плейлист */
         .playlist-container { 
             display: none; /* Скрыт по умолчанию */
             overflow-y: auto; 
-            margin-top: 15px; 
+            margin-top: 10px; 
             width: 100%; 
             border-top: 1px solid rgba(255,255,255,0.1); 
-            padding-top: 10px;
-            flex-grow: 1; /* Чтобы занимал место в полном режиме */
-            min-height: 0; /* Важно для скролла внутри flex */
+            padding-top: 5px;
+            /* Самое важное для фикса наложения: */
+            flex: 1 1 0; /* Растягиваться, но иметь базу 0 */
+            min-height: 0; /* Разрешить сжатие для появления скролла */
         }
         #playlist { list-style: none; padding: 0; margin: 0; }
-        .playlist-item { padding: 8px 10px; border-radius: 5px; font-size: 13px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .playlist-item { padding: 8px 10px; border-radius: 5px; font-size: 13px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
         .playlist-item:hover { background-color: rgba(255,255,255,0.1); }
         .playlist-item.playing { background-color: var(--player-accent-color); color: #fff; font-weight: bold; }
 
-        /* === ЛОГИКА РЕЖИМОВ И ДИЗАЙНОВ === */
+        /* Стилизация скроллбара */
+        .playlist-container::-webkit-scrollbar { width: 6px; }
+        .playlist-container::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); border-radius: 3px; }
+        .playlist-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 3px; }
+        .design-russian .playlist-container::-webkit-scrollbar-thumb { background: #B8860B; } /* Золотой скролл */
 
-        /* --- Full Mode (Общие правила для всех дизайнов кроме круглого) --- */
+        /* === РЕЖИМЫ И ДИЗАЙНЫ === */
+
+        /* Full Mode */
         .player-container.full-mode {
-            flex-direction: column !important; /* Всегда вертикально */
+            flex-direction: column !important; /* Вертикальная раскладка */
         }
         .player-container.full-mode .main-view {
-            flex-direction: column !important; /* Обложка и кнопки вертикально */
-            flex-grow: 0; /* Не растягиваться бесконечно, место для плейлиста */
-            height: auto;
+            flex-direction: column !important;
             align-items: center;
             text-align: center;
+            flex: 0 0 auto; /* Не растягивать верхнюю часть */
         }
-        .player-container.full-mode .album-art {
-            width: 120px; height: 120px; /* Чуть меньше в полном режиме */
-        }
-        .player-container.full-mode .controls-info {
-            width: 100%;
-        }
-        .player-container.full-mode .playlist-container {
-            display: block !important; /* Показываем плейлист */
-        }
+        .player-container.full-mode .album-art { width: 120px; height: 120px; }
+        .player-container.full-mode .controls-info { width: 100%; }
+        .player-container.full-mode .playlist-container { display: block !important; }
 
         /* 1. Стандарт */
         .player-container.design-standard { flex-direction: row; }
-        /* Full mode наследует общие правила выше */
 
         /* 2. Круглый */
         .player-container.design-round {
@@ -127,7 +131,7 @@
             flex-direction: column;
             align-items: center; justify-content: center; text-align: center; padding: 20px;
         }
-        .design-round .main-view { flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
+        .design-round .main-view { flex-direction: column; align-items: center; justify-content: center; gap: 8px; flex: 1 1 auto;}
         .design-round .album-art { width: 90px; height: 90px; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.4); } 
         .design-round #visualizer, .design-round .playlist-container { display: none !important; }
         .design-round .progress-container { width: 70%; justify-content: center; margin: 2px 0; }
@@ -146,7 +150,7 @@
             content: ''; position: absolute; top: 5px; left: 5px; right: 5px; bottom: 5px;
             border: 2px solid #FFD700; border-radius: 6px; pointer-events: none; opacity: 0.5; z-index: 0;
         }
-        .design-russian * { z-index: 1; } /* Контент выше рамки */
+        .design-russian * { z-index: 1; }
         
         .design-russian { font-family: 'Ruslan Display', cursive !important; }
         .design-russian #track-title { color: #FFD700; text-shadow: 2px 2px 0px #000; font-size: 22px; letter-spacing: 1px; }
@@ -158,11 +162,10 @@
         .design-russian .album-art { border: 3px solid #B8860B; border-radius: 50%; }
         .design-russian.neon { box-shadow: 0 0 25px #FFD700; }
         
-        /* Стили плейлиста для Русского стиля */
         .design-russian .playlist-container { border-top: 2px solid #B8860B; }
-        .design-russian .playlist-item { color: #FFE4B5; font-family: 'Playfair Display', serif; }
-        .design-russian .playlist-item:hover { background-color: rgba(184, 134, 11, 0.3); }
-        .design-russian .playlist-item.playing { background-color: #B8860B; color: #3a0000; }
+        .design-russian .playlist-item { color: #FFE4B5; font-family: 'Playfair Display', serif; border-bottom: 1px dashed rgba(184, 134, 11, 0.3); }
+        .design-russian .playlist-item:hover { background-color: rgba(184, 134, 11, 0.2); }
+        .design-russian .playlist-item.playing { background-color: #B8860B; color: #3a0000; font-family: 'Ruslan Display'; }
 
         /* 4. Минимализм */
         .player-container.design-minimalist {
@@ -224,7 +227,7 @@
         const canvas = document.getElementById('visualizer');
         const ctx = canvas.getContext('2d');
 
-        let tracks = [], currentTrackIdx = 0, isPlaying = false, isShuffle = false, isRepeat = false;
+        let tracks = [], currentTrackIdx = 0, isPlaying = false, isShuffle = false, isRepeat = false, isAutoplay = false;
         let audioCtx, analyser, source, dataArray, isVisualizerInit = false;
         let baseW = 500, baseH = 180;
 
@@ -235,10 +238,8 @@
             return `rgba(${r},${g},${b},${alpha})`;
         }
 
-        // --- Масштабирование (с отступом от краев) ---
+        // --- Масштабирование ---
         function fitToScreen() {
-            // Множитель 0.96 создает 4% отступ по краям, чтобы тени не обрезались
-            // Для круглого делаем отступ больше (0.9), чтобы было красивее
             const factor = player.classList.contains('design-round') ? 0.9 : 0.96;
             const scale = Math.min(window.innerWidth / baseW, window.innerHeight / baseH) * factor;
             scaleWrapper.style.width = baseW + 'px';
@@ -261,6 +262,9 @@
             const size = params.get('size') || 'compact';
             const color = params.get('color') || '#4B0082';
             
+            // Настройка автоплея
+            isAutoplay = params.get('autoplay') === 'true';
+
             // Цвет
             const rgbaColor = hexToRgba(color, 0.75);
             root.style.setProperty('--player-bg-color-dynamic', rgbaColor);
@@ -277,7 +281,7 @@
                 player.classList.remove('neon');
             }
 
-            // Сброс и применение дизайна
+            // Дизайн
             player.classList.remove('design-standard', 'design-round', 'design-russian', 'design-minimalist', 'compact', 'full-mode');
 
             if (design === 'round') {
@@ -300,7 +304,7 @@
             function setupStandardSize(s) {
                 if (s === 'full') {
                     player.classList.add('full-mode');
-                    baseW = 800; baseH = 400; // Размеры для полного режима
+                    baseW = 800; baseH = 400;
                 } else {
                     baseW = 500; baseH = 180;
                 }
@@ -314,8 +318,16 @@
             if (!str) return;
             try {
                 tracks = decodeURIComponent(str).split('|||').filter(Boolean).map(line => {
-                    const [url, name] = line.split('|').map(s => s.trim());
-                    return { url, name: name || 'Unknown Track' };
+                    // Улучшенный парсинг: если нет |, берем имя файла и декодируем %20 в пробелы
+                    let [url, name] = line.split('|').map(s => s.trim());
+                    if (!name) {
+                        try {
+                            name = decodeURIComponent(url.split('/').pop().replace(/\.mp3.*$/i, '').replace(/[\-_]/g, ' '));
+                        } catch(e) {
+                            name = "Unknown Track";
+                        }
+                    }
+                    return { url, name };
                 });
                 if (tracks.length > 0) { buildPlaylist(); loadTrack(0); }
             } catch(e) {}
@@ -329,30 +341,60 @@
         function playTrack() { if(!isVisualizerInit) initVisualizer(); audio.play().then(()=>{ isPlaying=true; playPauseBtn.innerHTML='<i class="fas fa-pause-circle"></i>';}).catch(()=>{}); }
         function pauseTrack() { audio.pause(); isPlaying=false; playPauseBtn.innerHTML='<i class="fas fa-play-circle"></i>'; }
         function togglePlay() { if(tracks.length) isPlaying?pauseTrack():playTrack(); }
+        
         function nextTrack() {
+            let nextIdx = currentTrackIdx;
             if (isShuffle) {
-                currentTrackIdx = Math.floor(Math.random()*tracks.length);
+                nextIdx = Math.floor(Math.random()*tracks.length);
             } else {
-                currentTrackIdx = (currentTrackIdx+1)%tracks.length;
-                if (currentTrackIdx === 0 && !isRepeat && !isShuffle) { pauseTrack(); return; }
+                nextIdx = (currentTrackIdx + 1);
             }
-            loadTrack(currentTrackIdx); playTrack();
+
+            // Если список кончился (и не шаффл, и не повтор)
+            if (nextIdx >= tracks.length && !isRepeat && !isShuffle) {
+                pauseTrack(); return; 
+            }
+            
+            // Зацикливание индекса
+            currentTrackIdx = nextIdx % tracks.length;
+            loadTrack(currentTrackIdx); 
+            playTrack();
         }
-        function prevTrack() { currentTrackIdx = (currentTrackIdx-1+tracks.length)%tracks.length; loadTrack(currentTrackIdx); playTrack(); }
+        
+        function prevTrack() { 
+            currentTrackIdx = (currentTrackIdx - 1 + tracks.length) % tracks.length; 
+            loadTrack(currentTrackIdx); 
+            playTrack(); 
+        }
 
         audio.addEventListener('timeupdate', () => { if(audio.duration) { progressBar.value = (audio.currentTime/audio.duration)*100; currentTimeEl.textContent = fmtTime(audio.currentTime); totalDurationEl.textContent = fmtTime(audio.duration); }});
         progressBar.addEventListener('input', (e) => { audio.currentTime = (e.target.value/100)*audio.duration; });
         
+        // --- ЛОГИКА ОКОНЧАНИЯ ТРЕКА ---
         audio.addEventListener('ended', () => { 
-            if(isRepeat) { audio.currentTime=0; playTrack(); } 
-            else { 
-                if (currentTrackIdx < tracks.length - 1 || isShuffle) nextTrack();
-                else pauseTrack(); 
+            if(isRepeat) { 
+                audio.currentTime=0; playTrack(); 
+            } else if (isAutoplay) {
+                nextTrack(); // Играем следующий, если включено авто
+            } else { 
+                // Просто останавливаемся и сбрасываем кнопку
+                isPlaying = false; 
+                playPauseBtn.innerHTML='<i class="fas fa-play-circle"></i>';
             }
         });
         
         function fmtTime(s) { const m=Math.floor(s/60), sc=Math.floor(s%60); return `${m}:${sc<10?'0':''}${sc}`; }
-        function buildPlaylist() { playlistEl.innerHTML = ''; tracks.forEach((t, i) => { const li = document.createElement('li'); li.className = 'playlist-item'; li.textContent = t.name; li.onclick = () => { loadTrack(i); playTrack(); }; playlistEl.appendChild(li); }); }
+        
+        function buildPlaylist() { 
+            playlistEl.innerHTML = ''; 
+            tracks.forEach((t, i) => { 
+                const li = document.createElement('li'); 
+                li.className = 'playlist-item'; 
+                li.textContent = t.name; 
+                li.onclick = () => { loadTrack(i); playTrack(); }; 
+                playlistEl.appendChild(li); 
+            }); 
+        }
         function updatePlaylistUI() { Array.from(playlistEl.children).forEach((li, i) => li.classList.toggle('playing', i === currentTrackIdx)); }
 
         playPauseBtn.onclick = togglePlay; nextBtn.onclick = nextTrack; prevBtn.onclick = prevTrack;
