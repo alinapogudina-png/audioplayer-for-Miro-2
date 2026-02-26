@@ -138,7 +138,7 @@
             flex-direction: column;
             align-items: center; justify-content: center; text-align: center; padding: 20px;
             
-            /* НОВОЕ: Защита от овала. Заставляет плеер быть квадратом всегда */
+            /* Защита от овала */
             aspect-ratio: 1 / 1; 
             width: auto !important;
             height: auto !important;
@@ -146,12 +146,28 @@
             max-height: 100%;
         }
         .design-round .main-view { flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
-        .design-round .album-art { width: 90px; height: 90px; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.4); } 
+        
+        /* Изменено для круглого: чуть меньше обложка и скрыт artist */
+        .design-round .album-art { 
+            width: 85px; height: 85px; 
+            border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.4); 
+            margin-bottom: 5px;
+        } 
+        
+        /* СКРЫВАЕМ Now Playing для круга */
+        .design-round #track-artist { display: none !important; }
+        
         .design-round #visualizer, .design-round .playlist-container { display: none !important; }
         .design-round .progress-container { width: 70%; justify-content: center; margin: 2px 0; }
-        .design-round .player-controls { gap: 10px; margin-top: 2px; }
-        .design-round #track-title { font-size: 16px; margin-top: 5px; }
-        .design-round #track-artist { font-size: 12px; }
+        
+        /* Поднимаем кнопки выше */
+        .design-round .player-controls { 
+            gap: 10px; 
+            margin-top: 0; 
+            padding-bottom: 15px; /* Отступ снизу, чтобы кнопки "всплыли" */
+        }
+        
+        .design-round #track-title { font-size: 16px; margin-top: 5px; margin-bottom: 5px; }
 
         /* 3. Русский стиль */
         .player-container.design-russian {
@@ -257,8 +273,7 @@
         }
 
         function fitToScreen() {
-            // ИСПРАВЛЕНИЕ: Уменьшил фактор для круглого стиля с 0.9 до 0.8.
-            // Это дает больше места для свечения, чтобы оно не обрезалось.
+            // Фактор 0.8 для круга, чтобы неон не резался
             const factor = player.classList.contains('design-round') ? 0.8 : 0.96;
             const scale = Math.min(window.innerWidth / baseW, window.innerHeight / baseH) * factor;
             scaleWrapper.style.width = baseW + 'px';
