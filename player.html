@@ -60,6 +60,8 @@
         }
         .track-info { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-shadow: 0 0 5px rgba(0,0,0,0.5); margin-bottom: 5px;}
         #track-title { font-size: 20px; font-weight: 600; margin: 0; }
+        
+        /* Стандартный стиль артиста */
         #track-artist { font-size: 14px; opacity: 0.8; margin: 0; }
         
         .progress-container { width: 100%; display: flex; align-items: center; gap: 8px; font-size: 12px; margin: 5px 0;}
@@ -97,121 +99,100 @@
         /* === ЛОГИКА РЕЖИМОВ И ДИЗАЙНОВ === */
 
         /* --- Full Mode --- */
-        .player-container.full-mode {
-            flex-direction: row !important;
-            align-items: stretch;
-        }
-        .player-container.full-mode .main-view {
-            flex-direction: column !important;
-            flex-grow: 0;
-            width: 40%;
-            min-width: 280px;
-            border-right: 1px solid rgba(255,255,255,0.1);
-            padding-right: 20px;
-            align-items: center;
-            text-align: center;
-            justify-content: center;
-            padding-bottom: 20px;
-        }
-        .player-container.full-mode .playlist-container {
-            display: block !important;
-            width: 60%;
-            margin-top: 0;
-            border-top: none;
-            padding-left: 20px;
-            padding-top: 0;
-            height: 100%;
-        }
+        .player-container.full-mode { flex-direction: row !important; align-items: stretch; }
+        .player-container.full-mode .main-view { flex-direction: column !important; flex-grow: 0; width: 40%; min-width: 280px; border-right: 1px solid rgba(255,255,255,0.1); padding-right: 20px; align-items: center; text-align: center; justify-content: center; padding-bottom: 20px; }
+        .player-container.full-mode .playlist-container { display: block !important; width: 60%; margin-top: 0; border-top: none; padding-left: 20px; padding-top: 0; height: 100%; }
         .player-container.full-mode .album-art { width: 130px; height: 130px; margin-bottom: 15px; }
         .player-container.full-mode #track-artist { display: none; }
         .player-container.full-mode .control-btn { font-size: 26px; gap: 20px; }
         .player-container.full-mode #play-pause-btn { font-size: 56px; }
         .player-container.full-mode .controls-info { width: 100%; justify-content: flex-start; padding-top: 0; }
 
-
         /* 1. Стандарт */
         .player-container.design-standard { flex-direction: row; }
+
+        /* ========================================================= */
+        /* === ВОТ ЗДЕСЬ НАСТРОЙКИ КРУГЛОГО ДИЗАЙНА (design-round) === */
+        /* ========================================================= */
         
-        /* 2. Круглый (ПОЛНОСТЬЮ ПЕРЕДЕЛАН) */
         .player-container.design-round {
             border-radius: 50% !important;
             flex-direction: column;
-            align-items: center; justify-content: center !important; text-align: center; 
-            padding: 0 !important;
             
+            /* Центровка всего содержимого */
+            justify-content: center !important;
+            align-items: center !important;
+            text-align: center;
+            
+            padding: 5px !important;
             aspect-ratio: 1 / 1; 
-            width: auto !important;
-            height: auto !important;
-            max-width: 100%;
-            max-height: 100%;
+            width: auto !important; height: auto !important;
+            max-width: 100%; max-height: 100%;
         }
+
         .design-round .main-view { 
             flex-direction: column; 
             align-items: center; 
             justify-content: center !important; 
-            gap: 0 !important; 
-            height: 100%;
-            width: 100%;
+            gap: 5px !important; /* Расстояние между элементами */
+            height: 100%; width: 100%;
         }
-        
-        /* ГАРАНТИРОВАННОЕ СКРЫТИЕ ТЕКСТА */
-        .design-round #track-artist { display: none !important; }
-        
-        /* Обложка */
+
+        /* 1. СКРЫВАЕМ Now Playing (Артиста) */
+        .design-round #track-artist { 
+            display: none !important; 
+        }
+
+        /* 2. РАЗМЕР ОБЛОЖКИ */
         .design-round .album-art { 
-            width: 75px; height: 75px; 
-            border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.4); 
-            margin-bottom: 10px;
-            margin-top: 5px;
+            width: 70px; /* <--- Увеличь/уменьши это число, если обложка большая/маленькая */
+            height: 70px; /* <--- И это тоже (должно быть одинаковым) */
+            
+            border-radius: 50%; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4); 
+            margin-bottom: 5px; /* Отступ снизу от обложки */
+            flex-shrink: 0;
         } 
-        
+
         .design-round #visualizer, .design-round .playlist-container { display: none !important; }
-        
-        .design-round .progress-container { width: 75%; justify-content: center; margin: 5px 0; }
-        
-        /* Кнопки и название */
+
+        /* 3. ШИРИНА ПРОГРЕСС БАРА */
+        .design-round .progress-container { 
+            width: 70%; /* <--- Если полоска слишком широкая, уменьши этот % */
+            justify-content: center; 
+            margin: 2px 0; 
+        }
+
+        /* 4. КНОПКИ */
         .design-round .player-controls { 
-            gap: 15px; 
-            margin-top: 5px; 
+            gap: 10px; 
+            margin-top: 2px;
         }
         
-        .design-round #track-title { font-size: 15px; margin-bottom: 5px; }
+        .design-round #track-title { font-size: 15px; margin: 2px 0; }
+        /* ========================================================= */
+
 
         /* 3. Русский стиль */
-        .player-container.design-russian {
-            background: radial-gradient(circle at center, #3a0000 0%, #000000 100%) !important;
-            border: 6px solid #B8860B;
-            border-radius: 12px;
-            box-shadow: inset 0 0 30px #000, 0 10px 25px rgba(0,0,0,0.6);
-        }
-        .player-container.design-russian::before {
-            content: ''; position: absolute; top: 5px; left: 5px; right: 5px; bottom: 5px;
-            border: 2px solid #FFD700; border-radius: 6px; pointer-events: none; opacity: 0.5; z-index: 0;
-        }
+        .player-container.design-russian { background: radial-gradient(circle at center, #3a0000 0%, #000000 100%) !important; border: 6px solid #B8860B; border-radius: 12px; box-shadow: inset 0 0 30px #000, 0 10px 25px rgba(0,0,0,0.6); }
+        .player-container.design-russian::before { content: ''; position: absolute; top: 5px; left: 5px; right: 5px; bottom: 5px; border: 2px solid #FFD700; border-radius: 6px; pointer-events: none; opacity: 0.5; z-index: 0; }
         .design-russian * { z-index: 1; } 
-        
         .design-russian { font-family: 'Ruslan Display', cursive !important; }
         .design-russian #track-title { color: #FFD700; text-shadow: 2px 2px 0px #000; font-size: 22px; letter-spacing: 1px; }
         .design-russian #track-artist { color: #FF6347; font-family: 'Playfair Display', serif; }
-        
         .design-russian .control-btn { color: #FFD700; opacity: 0.9; }
         .design-russian .control-btn:hover { color: #fff; text-shadow: 0 0 10px #FFD700; transform: scale(1.15); }
         .design-russian #progress-bar::-webkit-slider-thumb { background: #FF0000; border: 2px solid #FFD700; }
         .design-russian .album-art { border: 3px solid #B8860B; border-radius: 50%; }
-        
         .design-russian.neon { box-shadow: 0 0 25px var(--neon-color); }
-        
         .design-russian .playlist-container { border-top: 2px solid #B8860B; }
         .player-container.design-russian.full-mode .playlist-container { border-top: none; border-left: 2px solid #B8860B; }
-        
         .design-russian .playlist-item { color: #FFE4B5; font-family: 'Playfair Display', serif; }
         .design-russian .playlist-item:hover { background-color: rgba(184, 134, 11, 0.3); }
         .design-russian .playlist-item.playing { background-color: #B8860B; color: #3a0000; }
 
         /* 4. Минимализм */
-        .player-container.design-minimalist {
-            border-radius: 8px; border: none; backdrop-filter: none; box-shadow: none;
-        }
+        .player-container.design-minimalist { border-radius: 8px; border: none; backdrop-filter: none; box-shadow: none; }
         .design-minimalist.neon { box-shadow: none !important; filter: drop-shadow(0 0 8px var(--neon-color)); }
         .design-minimalist .album-art { border-radius: 4px; box-shadow: none; }
         .design-minimalist .control-btn { opacity: 0.7; }
@@ -281,7 +262,7 @@
         }
 
         function fitToScreen() {
-            // Увеличил размер круга (с 0.8 до 0.95), чтобы заполнял почти всё окно
+            // МАСШТАБ КРУГА ЗДЕСЬ
             const factor = player.classList.contains('design-round') ? 0.95 : 0.96;
             const scale = Math.min(window.innerWidth / baseW, window.innerHeight / baseH) * factor;
             scaleWrapper.style.width = baseW + 'px';
