@@ -59,10 +59,10 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
         .track-info { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-shadow: 0 0 5px rgba(0,0,0,0.5); margin-bottom: 5px;}
-        #track-title { font-size: 20px; font-weight: 600; margin: 0; }
         
-        /* Стандартный стиль артиста */
-        #track-artist { font-size: 14px; opacity: 0.8; margin: 0; }
+        /* Исправлены ID селекторы */
+        #trackTitle { font-size: 20px; font-weight: 600; margin: 0; }
+        #trackArtist { font-size: 14px; opacity: 0.8; margin: 0; }
         
         .progress-container { width: 100%; display: flex; align-items: center; gap: 8px; font-size: 12px; margin: 5px 0;}
         #progress-bar {
@@ -103,7 +103,7 @@
         .player-container.full-mode .main-view { flex-direction: column !important; flex-grow: 0; width: 40%; min-width: 280px; border-right: 1px solid rgba(255,255,255,0.1); padding-right: 20px; align-items: center; text-align: center; justify-content: center; padding-bottom: 20px; }
         .player-container.full-mode .playlist-container { display: block !important; width: 60%; margin-top: 0; border-top: none; padding-left: 20px; padding-top: 0; height: 100%; }
         .player-container.full-mode .album-art { width: 130px; height: 130px; margin-bottom: 15px; }
-        .player-container.full-mode #track-artist { display: none; }
+        .player-container.full-mode #trackArtist { display: none; }
         .player-container.full-mode .control-btn { font-size: 26px; gap: 20px; }
         .player-container.full-mode #play-pause-btn { font-size: 56px; }
         .player-container.full-mode .controls-info { width: 100%; justify-content: flex-start; padding-top: 0; }
@@ -112,19 +112,18 @@
         .player-container.design-standard { flex-direction: row; }
 
         /* ========================================================= */
-        /* === ВОТ ЗДЕСЬ НАСТРОЙКИ КРУГЛОГО ДИЗАЙНА (design-round) === */
+        /* === ИСПРАВЛЕННЫЙ КРУГЛЫЙ ДИЗАЙН === */
         /* ========================================================= */
         
         .player-container.design-round {
             border-radius: 50% !important;
             flex-direction: column;
-            
-            /* Центровка всего содержимого */
             justify-content: center !important;
             align-items: center !important;
             text-align: center;
-            
             padding: 5px !important;
+            
+            /* Обеспечивает круглую форму */
             aspect-ratio: 1 / 1; 
             width: auto !important; height: auto !important;
             max-width: 100%; max-height: 100%;
@@ -134,22 +133,23 @@
             flex-direction: column; 
             align-items: center; 
             justify-content: center !important; 
-            gap: 5px !important; /* Расстояние между элементами */
+            gap: 2px !important; /* Минимальный отступ между элементами */
             height: 100%; width: 100%;
         }
 
-        /* 1. СКРЫВАЕМ Now Playing (Артиста) */
-        .design-round #track-artist { 
+        /* 1. СКРЫВАЕМ Now Playing (ИСПРАВЛЕН ID) */
+        .design-round #trackArtist { 
             display: none !important; 
         }
 
         /* 2. РАЗМЕР ОБЛОЖКИ */
         .design-round .album-art { 
-            width: 70px; 
-            height: 70px; 
+            width: 80px; 
+            height: 80px; 
             border-radius: 50%; 
             box-shadow: 0 4px 10px rgba(0,0,0,0.4); 
             margin-bottom: 5px; 
+            margin-top: 0px;
             flex-shrink: 0;
         } 
 
@@ -157,21 +157,22 @@
 
         /* 3. ШИРИНА ПРОГРЕСС БАРА */
         .design-round .progress-container { 
-            width: 70%;
+            width: 75%;
             justify-content: center; 
             margin: 2px 0; 
         }
 
         /* 4. КНОПКИ */
         .design-round .player-controls { 
-            gap: 10px; 
+            gap: 12px; 
             margin-top: 2px;
         }
         
-        /* 5. РАЗМЕР ШРИФТА (ЗДЕСЬ МЕНЯТЬ) */
-        .design-round #track-title { 
-            font-size: 11px; /* Сделал мелко (было 15px) */
-            margin-bottom: 5px; 
+        /* 5. РАЗМЕР ШРИФТА (ИСПРАВЛЕН ID) */
+        .design-round #trackTitle { 
+            font-size: 12px !important; /* ТЕПЕРЬ ТОЧНО МЕЛКО */
+            margin-bottom: 3px !important; 
+            margin-top: 3px !important;
         }
         
         /* ========================================================= */
@@ -182,8 +183,8 @@
         .player-container.design-russian::before { content: ''; position: absolute; top: 5px; left: 5px; right: 5px; bottom: 5px; border: 2px solid #FFD700; border-radius: 6px; pointer-events: none; opacity: 0.5; z-index: 0; }
         .design-russian * { z-index: 1; } 
         .design-russian { font-family: 'Ruslan Display', cursive !important; }
-        .design-russian #track-title { color: #FFD700; text-shadow: 2px 2px 0px #000; font-size: 22px; letter-spacing: 1px; }
-        .design-russian #track-artist { color: #FF6347; font-family: 'Playfair Display', serif; }
+        .design-russian #trackTitle { color: #FFD700; text-shadow: 2px 2px 0px #000; font-size: 22px; letter-spacing: 1px; }
+        .design-russian #trackArtist { color: #FF6347; font-family: 'Playfair Display', serif; }
         .design-russian .control-btn { color: #FFD700; opacity: 0.9; }
         .design-russian .control-btn:hover { color: #fff; text-shadow: 0 0 10px #FFD700; transform: scale(1.15); }
         .design-russian #progress-bar::-webkit-slider-thumb { background: #FF0000; border: 2px solid #FFD700; }
@@ -210,6 +211,7 @@
                 <img id="albumArt" class="album-art" src="" alt="Cover">
                 <div class="controls-info">
                     <div class="track-info">
+                        <!-- ВНИМАНИЕ: ID ЗДЕСЬ trackTitle и trackArtist -->
                         <p id="trackTitle">Loading...</p>
                         <p id="trackArtist">...</p>
                     </div>
