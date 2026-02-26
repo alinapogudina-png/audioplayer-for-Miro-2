@@ -132,15 +132,12 @@
         /* 1. Стандарт */
         .player-container.design-standard { flex-direction: row; }
         
-        /* 2. Круглый (ФИНАЛЬНЫЕ ИСПРАВЛЕНИЯ) */
+        /* 2. Круглый (ПОЛНОСТЬЮ ПЕРЕДЕЛАН) */
         .player-container.design-round {
             border-radius: 50% !important;
             flex-direction: column;
-            align-items: center; justify-content: center; text-align: center; 
-            padding: 10px; /* Уменьшил внутренний отступ */
-            
-            /* Смещение контента вверх за счет нижнего паддинга */
-            padding-bottom: 40px; 
+            align-items: center; justify-content: center !important; text-align: center; 
+            padding: 0 !important;
             
             aspect-ratio: 1 / 1; 
             width: auto !important;
@@ -148,28 +145,37 @@
             max-width: 100%;
             max-height: 100%;
         }
-        .design-round .main-view { flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
+        .design-round .main-view { 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center !important; 
+            gap: 0 !important; 
+            height: 100%;
+            width: 100%;
+        }
         
-        /* Обложка стала еще меньше (70px) */
-        .design-round .album-art { 
-            width: 70px; height: 70px; 
-            border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.4); 
-            margin-bottom: 2px;
-        } 
-        
-        /* СКРЫВАЕМ Now Playing */
+        /* ГАРАНТИРОВАННОЕ СКРЫТИЕ ТЕКСТА */
         .design-round #track-artist { display: none !important; }
         
-        .design-round #visualizer, .design-round .playlist-container { display: none !important; }
-        .design-round .progress-container { width: 80%; justify-content: center; margin: 2px 0; }
+        /* Обложка */
+        .design-round .album-art { 
+            width: 75px; height: 75px; 
+            border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.4); 
+            margin-bottom: 10px;
+            margin-top: 5px;
+        } 
         
-        /* Кнопки */
+        .design-round #visualizer, .design-round .playlist-container { display: none !important; }
+        
+        .design-round .progress-container { width: 75%; justify-content: center; margin: 5px 0; }
+        
+        /* Кнопки и название */
         .design-round .player-controls { 
-            gap: 10px; 
+            gap: 15px; 
             margin-top: 5px; 
         }
         
-        .design-round #track-title { font-size: 15px; margin-top: 3px; margin-bottom: 3px; }
+        .design-round #track-title { font-size: 15px; margin-bottom: 5px; }
 
         /* 3. Русский стиль */
         .player-container.design-russian {
@@ -275,8 +281,8 @@
         }
 
         function fitToScreen() {
-            // Оставляем 0.8 для круга
-            const factor = player.classList.contains('design-round') ? 0.8 : 0.96;
+            // Увеличил размер круга (с 0.8 до 0.95), чтобы заполнял почти всё окно
+            const factor = player.classList.contains('design-round') ? 0.95 : 0.96;
             const scale = Math.min(window.innerWidth / baseW, window.innerHeight / baseH) * factor;
             scaleWrapper.style.width = baseW + 'px';
             scaleWrapper.style.height = baseH + 'px';
