@@ -134,7 +134,7 @@
             flex-direction: column; 
             align-items: center; 
             justify-content: center !important; 
-            gap: 3px !important; /* Расстояние между элементами */
+            gap: 5px !important; /* Расстояние между элементами */
             height: 100%; width: 100%;
         }
 
@@ -145,12 +145,11 @@
 
         /* 2. РАЗМЕР ОБЛОЖКИ */
         .design-round .album-art { 
-            width: 40px; /* <--- Увеличь/уменьши это число, если обложка большая/маленькая */
-            height: 40px; /* <--- И это тоже (должно быть одинаковым) */
-            
+            width: 70px; 
+            height: 70px; 
             border-radius: 50%; 
             box-shadow: 0 4px 10px rgba(0,0,0,0.4); 
-            margin-bottom: 3px; /* Отступ снизу от обложки */
+            margin-bottom: 5px; 
             flex-shrink: 0;
         } 
 
@@ -158,18 +157,23 @@
 
         /* 3. ШИРИНА ПРОГРЕСС БАРА */
         .design-round .progress-container { 
-            width: 10%; /* <--- Если полоска слишком широкая, уменьши этот % */
+            width: 70%;
             justify-content: center; 
-            margin: 1px 0; 
+            margin: 2px 0; 
         }
 
         /* 4. КНОПКИ */
         .design-round .player-controls { 
-            gap: 8px; 
-            margin-top: 1px;
+            gap: 10px; 
+            margin-top: 2px;
         }
         
-        .design-round #track-title { font-size: 2px; margin: 1px 0; }
+        /* 5. РАЗМЕР ШРИФТА (ЗДЕСЬ МЕНЯТЬ) */
+        .design-round #track-title { 
+            font-size: 11px; /* Сделал мелко (было 15px) */
+            margin-bottom: 5px; 
+        }
+        
         /* ========================================================= */
 
 
@@ -409,5 +413,3 @@
     </script>
 </body>
 </html>
-
-
