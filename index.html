@@ -29,7 +29,7 @@
             <h1>Редактор аудиоплеера</h1>
             <div class="form-group" style="display: none;">
                 <label>Публичная ссылка</label>
-                <!-- ВАЖНО: Убедись, что тут твоя актуальная ссылка на player.html -->
+                <!-- Убедись, что ссылка ведет на твой player.html -->
                 <input type="url" id="publicUrl" value="https://alinapogudina-png.github.io/audioplayer-for-Miro-2/player.html">
             </div>
             <div class="form-group">
@@ -43,16 +43,13 @@
             </div>
             <div class="form-group">
                 <label>Треки</label>
-                <textarea id="trackLinks" rows="4">https://files.catbox.moe/xk6v0c.mp3 | Пример трека
-https://files.catbox.moe/d36fio.mp3 | Music
-https://files.catbox.moe/0srhsb.mp3 | Fiona</textarea>
+                <textarea id="trackLinks" rows="4">https://files.catbox.moe/xk6v0c.mp3 | Пример трека</textarea>
             </div>
             <div class="form-group"><label>Обложка</label><input type="url" id="coverUrl" value="https://i.postimg.cc/yxdYB3WT/Untitled-design3.png"></div>
             <div class="form-group"><label>Цвет фона (для стандартного стиля)</label><input type="color" id="mainColor" value="#4B0082"></div>
             
             <div class="checkbox-group"><input type="checkbox" id="neonToggle" checked><label>Неон / Цвет подсветки</label><input type="color" id="neonColor" value="#FF00FF"></div>
             
-            <!-- Новая настройка автоплея -->
             <div class="checkbox-group">
                 <input type="checkbox" id="autoplayToggle">
                 <label>Авто-переход к следующему треку</label>
@@ -115,7 +112,7 @@ https://files.catbox.moe/0srhsb.mp3 | Fiona</textarea>
             p.append('neonColor', controls.neonColor.value);
             p.append('size', controls.playerSize.value); 
             p.append('font', controls.playerFont.value);
-            p.append('autoplay', controls.autoplayToggle.checked); // Передаем настройку
+            p.append('autoplay', controls.autoplayToggle.checked);
             
             controls.previewFrame.src = `${controls.publicUrl.value}?${p.toString()}&t=${Date.now()}`;
             return p.toString();
@@ -123,11 +120,9 @@ https://files.catbox.moe/0srhsb.mp3 | Fiona</textarea>
 
         function gen() {
             let w='500', h='180';
-            // Если выбран полный размер, ставим размеры побольше
             if(controls.designStyle.value==='round'){w='350';h='350';} 
             else if(controls.playerSize.value==='full'){w='800';h='400';}
             
-            // Вставил allow="autoplay"
             controls.generatedCode.value = `<iframe src="${controls.publicUrl.value}?${update().split('&t=')[0]}" width="${w}" height="${h}" frameborder="0" allow="autoplay" allowfullscreen allowtransparency style="border-radius:20px;background:transparent;"></iframe>`;
         }
         
