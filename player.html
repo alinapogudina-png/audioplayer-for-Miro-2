@@ -96,7 +96,7 @@
 
         /* === ЛОГИКА РЕЖИМОВ И ДИЗАЙНОВ === */
 
-        /* --- Full Mode: ИСПРАВЛЕНИЯ РАЗМЕРОВ --- */
+        /* --- Full Mode --- */
         .player-container.full-mode {
             flex-direction: row !important;
             align-items: stretch;
@@ -110,8 +110,8 @@
             padding-right: 20px;
             align-items: center;
             text-align: center;
-            justify-content: center; /* Центрируем контент по вертикали */
-            padding-bottom: 20px; /* Дополнительный отступ снизу, чтобы кнопки не резались */
+            justify-content: center;
+            padding-bottom: 20px;
         }
         .player-container.full-mode .playlist-container {
             display: block !important;
@@ -122,33 +122,28 @@
             padding-top: 0;
             height: 100%;
         }
-        
-        /* Крупные элементы в полном режиме, но УМЕНЬШЕННЫЕ относительно прошлой версии */
-        .player-container.full-mode .album-art { 
-            width: 130px; /* Было 180, уменьшил чтобы влезли кнопки */
-            height: 130px; 
-            margin-bottom: 15px; 
-        }
-        
-        /* Скрываем поле "Now Playing" в полном режиме */
-        .player-container.full-mode #track-artist {
-            display: none;
-        }
-
+        .player-container.full-mode .album-art { width: 130px; height: 130px; margin-bottom: 15px; }
+        .player-container.full-mode #track-artist { display: none; }
         .player-container.full-mode .control-btn { font-size: 26px; gap: 20px; }
         .player-container.full-mode #play-pause-btn { font-size: 56px; }
-        /* Поднимаем блок с информацией чуть выше */
         .player-container.full-mode .controls-info { width: 100%; justify-content: flex-start; padding-top: 0; }
 
 
         /* 1. Стандарт */
         .player-container.design-standard { flex-direction: row; }
         
-        /* 2. Круглый */
+        /* 2. Круглый (ИСПРАВЛЕНИЯ) */
         .player-container.design-round {
             border-radius: 50% !important;
             flex-direction: column;
             align-items: center; justify-content: center; text-align: center; padding: 20px;
+            
+            /* НОВОЕ: Защита от овала. Заставляет плеер быть квадратом всегда */
+            aspect-ratio: 1 / 1; 
+            width: auto !important;
+            height: auto !important;
+            max-width: 100%;
+            max-height: 100%;
         }
         .design-round .main-view { flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
         .design-round .album-art { width: 90px; height: 90px; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.4); } 
@@ -262,7 +257,9 @@
         }
 
         function fitToScreen() {
-            const factor = player.classList.contains('design-round') ? 0.9 : 0.96;
+            // ИСПРАВЛЕНИЕ: Уменьшил фактор для круглого стиля с 0.9 до 0.8.
+            // Это дает больше места для свечения, чтобы оно не обрезалось.
+            const factor = player.classList.contains('design-round') ? 0.8 : 0.96;
             const scale = Math.min(window.innerWidth / baseW, window.innerHeight / baseH) * factor;
             scaleWrapper.style.width = baseW + 'px';
             scaleWrapper.style.height = baseH + 'px';
