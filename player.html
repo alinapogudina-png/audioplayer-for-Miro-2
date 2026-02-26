@@ -96,25 +96,26 @@
 
         /* === ЛОГИКА РЕЖИМОВ И ДИЗАЙНОВ === */
 
-        /* --- Full Mode: Обложка слева, Плейлист справа --- */
+        /* --- Full Mode: ИСПРАВЛЕНИЯ РАЗМЕРОВ --- */
         .player-container.full-mode {
-            flex-direction: row !important; /* Горизонтальное расположение */
+            flex-direction: row !important;
             align-items: stretch;
         }
         .player-container.full-mode .main-view {
-            flex-direction: column !important; /* Левая часть: элементы вертикально */
+            flex-direction: column !important;
             flex-grow: 0;
-            width: 40%; /* Ширина левой части */
+            width: 40%;
             min-width: 280px;
             border-right: 1px solid rgba(255,255,255,0.1);
             padding-right: 20px;
             align-items: center;
             text-align: center;
-            justify-content: center;
+            justify-content: center; /* Центрируем контент по вертикали */
+            padding-bottom: 20px; /* Дополнительный отступ снизу, чтобы кнопки не резались */
         }
         .player-container.full-mode .playlist-container {
             display: block !important;
-            width: 60%; /* Ширина правой части */
+            width: 60%;
             margin-top: 0;
             border-top: none;
             padding-left: 20px;
@@ -122,11 +123,22 @@
             height: 100%;
         }
         
-        /* Крупные элементы в полном режиме */
-        .player-container.full-mode .album-art { width: 180px; height: 180px; margin-bottom: 20px; }
+        /* Крупные элементы в полном режиме, но УМЕНЬШЕННЫЕ относительно прошлой версии */
+        .player-container.full-mode .album-art { 
+            width: 130px; /* Было 180, уменьшил чтобы влезли кнопки */
+            height: 130px; 
+            margin-bottom: 15px; 
+        }
+        
+        /* Скрываем поле "Now Playing" в полном режиме */
+        .player-container.full-mode #track-artist {
+            display: none;
+        }
+
         .player-container.full-mode .control-btn { font-size: 26px; gap: 20px; }
         .player-container.full-mode #play-pause-btn { font-size: 56px; }
-        .player-container.full-mode .controls-info { width: 100%; justify-content: flex-start; padding-top: 10px; }
+        /* Поднимаем блок с информацией чуть выше */
+        .player-container.full-mode .controls-info { width: 100%; justify-content: flex-start; padding-top: 0; }
 
 
         /* 1. Стандарт */
@@ -168,11 +180,9 @@
         .design-russian #progress-bar::-webkit-slider-thumb { background: #FF0000; border: 2px solid #FFD700; }
         .design-russian .album-art { border: 3px solid #B8860B; border-radius: 50%; }
         
-        /* Исправлено: Неон в русском стиле теперь берет цвет из настроек */
         .design-russian.neon { box-shadow: 0 0 25px var(--neon-color); }
         
         .design-russian .playlist-container { border-top: 2px solid #B8860B; }
-        /* Исправлена рамка плейлиста в полном режиме */
         .player-container.design-russian.full-mode .playlist-container { border-top: none; border-left: 2px solid #B8860B; }
         
         .design-russian .playlist-item { color: #FFE4B5; font-family: 'Playfair Display', serif; }
@@ -242,7 +252,7 @@
         let tracks = [], currentTrackIdx = 0, isPlaying = false, isShuffle = false, isRepeat = false;
         let audioCtx, analyser, source, dataArray, isVisualizerInit = false;
         let baseW = 500, baseH = 180;
-        let autoPlayNext = false; // Переменная для хранения настройки автоплея
+        let autoPlayNext = false;
 
         function hexToRgba(hex, alpha) {
             let r=0, g=0, b=0;
@@ -273,7 +283,7 @@
             const design = params.get('design') || 'standard';
             const size = params.get('size') || 'compact';
             const color = params.get('color') || '#4B0082';
-            autoPlayNext = params.get('autoplay') === 'true'; // Получаем настройку
+            autoPlayNext = params.get('autoplay') === 'true'; 
             
             const rgbaColor = hexToRgba(color, 0.75);
             root.style.setProperty('--player-bg-color-dynamic', rgbaColor);
@@ -354,7 +364,6 @@
         audio.addEventListener('timeupdate', () => { if(audio.duration) { progressBar.value = (audio.currentTime/audio.duration)*100; currentTimeEl.textContent = fmtTime(audio.currentTime); totalDurationEl.textContent = fmtTime(audio.duration); }});
         progressBar.addEventListener('input', (e) => { audio.currentTime = (e.target.value/100)*audio.duration; });
         
-        // Логика переключения с учетом галочки автоплея
         audio.addEventListener('ended', () => { 
             if(isRepeat) { 
                 audio.currentTime=0; playTrack(); 
@@ -364,7 +373,6 @@
                     if (currentTrackIdx < tracks.length - 1 || isShuffle) nextTrack();
                     else pauseTrack(); 
                 } else {
-                    // Если автоплей выключен - стоп
                     isPlaying = false;
                     playPauseBtn.innerHTML='<i class="fas fa-play-circle"></i>';
                 }
