@@ -61,9 +61,7 @@
         .track-info { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-shadow: 0 0 5px rgba(0,0,0,0.5); margin-bottom: 5px;}
         
         #trackTitle { font-size: 20px; font-weight: 600; margin: 0; }
-        
-        /* !!! ГЛОБАЛЬНОЕ УДАЛЕНИЕ NOW PLAYING ИЗ ВСЕХ ДИЗАЙНОВ !!! */
-        #trackArtist { display: none !important; }
+        #trackArtist { display: none !important; } /* Скрыто везде */
         
         .progress-container { width: 100%; display: flex; align-items: center; gap: 8px; font-size: 12px; margin: 5px 0;}
         #progress-bar {
@@ -83,7 +81,7 @@
         #visualizer { width: 100%; height: 30px; opacity: 0.6; }
         
         .playlist-container { 
-            display: none; /* Скрыт по умолчанию */
+            display: none; 
             overflow-y: auto; 
             margin-top: 15px; 
             width: 100%; 
@@ -97,8 +95,6 @@
         .playlist-item:hover { background-color: rgba(255,255,255,0.1); }
         .playlist-item.playing { background-color: var(--player-accent-color); color: #fff; font-weight: bold; }
 
-        /* === ЛОГИКА РЕЖИМОВ И ДИЗАЙНОВ === */
-
         /* --- Full Mode --- */
         .player-container.full-mode { flex-direction: row !important; align-items: stretch; }
         .player-container.full-mode .main-view { flex-direction: column !important; flex-grow: 0; width: 40%; min-width: 280px; border-right: 1px solid rgba(255,255,255,0.1); padding-right: 20px; align-items: center; text-align: center; justify-content: center; padding-bottom: 20px; }
@@ -111,10 +107,7 @@
         /* 1. Стандарт */
         .player-container.design-standard { flex-direction: row; }
 
-        /* ========================================================= */
-        /* === НАСТРОЙКИ КРУГЛОГО ДИЗАЙНА === */
-        /* ========================================================= */
-        
+        /* 2. Круглый */
         .player-container.design-round {
             border-radius: 50% !important;
             flex-direction: column;
@@ -126,51 +119,14 @@
             width: auto !important; height: auto !important;
             max-width: 100%; max-height: 100%;
         }
-
-        .design-round .main-view { 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center !important; 
-            gap: 2px !important; 
-            height: 100%; width: 100%;
-        }
-
-        /* Обложка */
-        .design-round .album-art { 
-            width: 80px; height: 80px; 
-            border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.4); 
-            margin-bottom: 5px; 
-            margin-top: 0px;
-            flex-shrink: 0;
-        } 
-
+        .design-round .main-view { flex-direction: column; align-items: center; justify-content: center !important; gap: 2px !important; height: 100%; width: 100%; }
+        .design-round .album-art { width: 80px; height: 80px; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.4); margin-bottom: 5px; margin-top: 0px; flex-shrink: 0; } 
         .design-round #visualizer, .design-round .playlist-container { display: none !important; }
-
         .design-round .progress-container { width: 75%; justify-content: center; margin: 2px 0; }
-
-        /* --- НОВЫЕ КНОПКИ ДЛЯ КРУГА --- */
-        .design-round .player-controls { 
-            gap: 8px; /* Уменьшил расстояние между кнопками */
-            margin-top: 2px;
-        }
-
-        /* Уменьшаем боковые кнопки только для круга */
-        .design-round .control-btn {
-            font-size: 14px; /* Меньше (было 18) */
-        }
-        
-        /* Кнопка Play чуть больше остальных, но компактнее чем раньше */
-        .design-round #play-pause-btn {
-            font-size: 28px; 
-        }
-        
-        .design-round #trackTitle { 
-            font-size: 12px !important; 
-            margin-bottom: 3px !important; 
-            margin-top: 3px !important;
-        }
-        
-        /* ========================================================= */
+        .design-round .player-controls { gap: 8px; margin-top: 2px; }
+        .design-round .control-btn { font-size: 14px; }
+        .design-round #play-pause-btn { font-size: 28px; }
+        .design-round #trackTitle { font-size: 12px !important; margin-bottom: 3px !important; margin-top: 3px !important; }
 
         /* 3. Русский стиль */
         .player-container.design-russian { background: radial-gradient(circle at center, #3a0000 0%, #000000 100%) !important; border: 6px solid #B8860B; border-radius: 12px; box-shadow: inset 0 0 30px #000, 0 10px 25px rgba(0,0,0,0.6); }
@@ -226,7 +182,8 @@
         </div>
     </div>
 
-    <audio id="audioSource" crossorigin="anonymous"></audio>
+    <!-- ДОБАВЛЕНЫ АТРИБУТЫ playsinline и preload ДЛЯ ТЕЛЕФОНОВ -->
+    <audio id="audioSource" crossorigin="anonymous" playsinline preload="auto"></audio>
 
     <script>
         const scaleWrapper = document.getElementById('scaleWrapper');
@@ -260,7 +217,6 @@
         }
 
         function fitToScreen() {
-            // МАСШТАБ КРУГА ЗДЕСЬ
             const factor = player.classList.contains('design-round') ? 0.95 : 0.96;
             const scale = Math.min(window.innerWidth / baseW, window.innerHeight / baseH) * factor;
             scaleWrapper.style.width = baseW + 'px';
@@ -342,10 +298,27 @@
 
         function loadTrack(i) {
             currentTrackIdx = i; audio.src = tracks[i].url;
-            trackTitle.textContent = tracks[i].name; trackArtist.textContent = "Now Playing";
+            trackTitle.textContent = tracks[i].name; 
             progressBar.value = 0; updatePlaylistUI();
         }
-        function playTrack() { if(!isVisualizerInit) initVisualizer(); audio.play().then(()=>{ isPlaying=true; playPauseBtn.innerHTML='<i class="fas fa-pause-circle"></i>';}).catch(()=>{}); }
+
+        // --- ГЛАВНОЕ ИСПРАВЛЕНИЕ ДЛЯ ТЕЛЕФОНОВ ---
+        function playTrack() { 
+            if(!isVisualizerInit) initVisualizer(); 
+            
+            // "Размораживаем" звук для iOS/Android
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            audio.play().then(()=>{ 
+                isPlaying=true; 
+                playPauseBtn.innerHTML='<i class="fas fa-pause-circle"></i>';
+            }).catch((err)=>{
+                console.error("Воспроизведение заблокировано телефоном:", err);
+            }); 
+        }
+
         function pauseTrack() { audio.pause(); isPlaying=false; playPauseBtn.innerHTML='<i class="fas fa-play-circle"></i>'; }
         function togglePlay() { if(tracks.length) isPlaying?pauseTrack():playTrack(); }
         
