@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Редактор аудиоплеера для Genially</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Alice&family=Amatic+SC:wght@700&family=Caveat:wght@400;700&family=Comfortaa:wght@400;700&family=Creepster&family=Lobster&family=Montserrat:wght@400;600&family=Neucha&family=Oswald:wght@400;600&family=Pacifico&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:wght@400;500;600&family=Press+Start+2P&family=Quicksand:wght@400;600&family=Roboto+Mono&family=Roboto:wght@400;700&family=Russo+One&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Alice&family=Amatic+SC:wght@700&family=Caveat:wght@400;700&family=Comfortaa:wght@400;700&family=Creepster&family=Kelly+Slab&family=Lobster&family=Merriweather:wght@400;700&family=Montserrat:wght@400;700&family=Neucha&family=Nunito:wght@400;700&family=Open+Sans:wght@400;700&family=Oswald:wght@400;600&family=Pacifico&family=Playfair+Display:wght@400;700&family=Poppins:wght@400;600&family=Press+Start+2P&family=Quicksand:wght@400;600&family=Roboto+Mono&family=Roboto:wght@400;700&family=Ruslan+Display&family=Russo+One&family=Underdog&display=swap');
         :root { --footer-color: rgba(255,255,255,0.7); }
         body {
             font-family: 'Poppins', sans-serif;
@@ -82,10 +82,6 @@
             text-align: center; font-size: 11px; color: var(--footer-color);
             z-index: 1000; pointer-events: none;
         }
-        .input-with-button { display: flex; gap: 10px; }
-        .input-with-button input { flex: 1; }
-        .upload-btn { padding: 0 15px; border-radius: 8px; border: 1px solid #535c91; background-color: #0f3460; color: #00c6ff; cursor: pointer; font-size: 16px; transition: 0.3s; display: flex; align-items: center; justify-content: center; margin-top: 0; }
-        .upload-btn:hover { background-color: rgba(0, 198, 255, 0.2); border-color: #00c6ff; transform: none; box-shadow: none; }
     </style>
 </head>
 <body>
@@ -117,13 +113,8 @@
             </div>
 
             <div class="form-group">
-                <label>Ссылка на обложку</label>
-                <div class="input-with-button">
-                    <input type="url" id="coverUrl" value="https://i.postimg.cc/yxdYB3WT/Untitled-design3.png">
-                    <button type="button" class="upload-btn" onclick="document.getElementById('coverFile').click()" title="Загрузить с компьютера">📂</button>
-                </div>
-                <input type="file" id="coverFile" accept="image/*" style="display:none;" onchange="handleCoverUpload(event)">
-                <small>Вставьте URL или загрузите файл с ПК (рекомендуется до 1 МБ)</small>
+                <label for="coverUrl">Ссылка на обложку</label>
+                <input type="url" id="coverUrl" value="https://i.postimg.cc/yxdYB3WT/Untitled-design3.png">
             </div>
 
             <div class="form-group">
@@ -189,7 +180,6 @@
             designStyle: document.getElementById('designStyle'),
             trackLinks: document.getElementById('trackLinks'),
             coverUrl: document.getElementById('coverUrl'),
-            coverFile: document.getElementById('coverFile'),
             mainColor: document.getElementById('mainColor'),
             neonToggle: document.getElementById('neonToggle'),
             neonColor: document.getElementById('neonColor'),
@@ -200,26 +190,6 @@
             generatedCode: document.getElementById('generated-code'),
             previewFrame: document.getElementById('previewFrame')
         };
-
-        function handleCoverUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            if (file.size > 2 * 1024 * 1024) {
-                alert('Файл слишком большой! Максимальный размер: 2 МБ.');
-                event.target.value = '';
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                controls.coverUrl.value = e.target.result;
-                updatePreview();
-            };
-            reader.onerror = () => alert('Не удалось прочитать файл.');
-            reader.readAsDataURL(file);
-            event.target.value = '';
-        }
 
         function updatePreview() {
             const params = new URLSearchParams();
@@ -271,7 +241,7 @@
         }
 
         Object.values(controls).forEach(element => {
-            if (element && (element.tagName === 'INPUT' || element.tagName === 'SELECT' || element.tagName === 'TEXTAREA') && element.type !== 'file') {
+            if (element && (element.tagName === 'INPUT' || element.tagName === 'SELECT' || element.tagName === 'TEXTAREA')) {
                 element.addEventListener('input', updatePreview);
             }
         });
