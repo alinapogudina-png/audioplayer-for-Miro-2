@@ -3,137 +3,296 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Редактор аудиоплеера</title>
+    <title>Редактор аудиоплеера для Genially</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Roboto+Mono&display=swap');
-        body { font-family: 'Poppins', sans-serif; background-color: #1a1a2e; color: #e0e0e0; display: flex; flex-direction: column; padding: 20px 20px 48px 20px; gap: 30px; min-height: 100vh; margin: 0; box-sizing: border-box; }
-        .main-content { display: flex; flex-grow: 1; gap: 30px; min-height: 0; }
-        .editor-panel, .preview-panel { background-color: #16213e; padding: 25px; border-radius: 15px; border: 1px solid rgba(255, 255, 255, 0.1); overflow-y: auto; display: flex; flex-direction: column; }
-        .editor-panel { width: 40%; } .preview-panel { width: 60%; }
-        h1 { color: #00c6ff; margin: 0 0 20px; }
+        @import url('https://fonts.googleapis.com/css2?family=Alice&family=Amatic+SC:wght@700&family=Caveat:wght@400;700&family=Comfortaa:wght@400;700&family=Creepster&family=Lobster&family=Montserrat:wght@400;600&family=Neucha&family=Oswald:wght@400;600&family=Pacifico&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:wght@400;500;600&family=Press+Start+2P&family=Quicksand:wght@400;600&family=Roboto+Mono&family=Roboto:wght@400;700&family=Russo+One&display=swap');
+        :root { --footer-color: rgba(255,255,255,0.7); }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #1a1a2e;
+            color: #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 20px 48px 20px;
+            gap: 30px;
+            min-height: 100vh;
+            margin: 0;
+            box-sizing: border-box;
+        }
+        .main-content {
+            display: flex;
+            flex-grow: 1;
+            gap: 30px;
+            min-height: 0;
+        }
+        .editor-panel, .preview-panel {
+            background-color: #16213e;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        .editor-panel { width: 40%; }
+        .preview-panel { width: 60%; }
+        h1, h2 {
+            color: #00c6ff;
+            text-shadow: 0 0 5px #00c6ff;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
         .form-group { margin-bottom: 20px; }
         label { display: block; margin-bottom: 8px; font-weight: 500; }
-        input, select, textarea { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #535c91; background-color: #0f3460; color: #e0e0e0; box-sizing: border-box; }
+        input[type="url"], input[type="text"], select, textarea {
+            width: 100%; padding: 10px; border-radius: 8px;
+            border: 1px solid #535c91; background-color: #0f3460;
+            color: #e0e0e0; box-sizing: border-box;
+        }
         textarea { min-height: 120px; resize: vertical; }
-        input[type="color"] { padding: 0; width: 50px; height: 30px; border: none; }
-        .checkbox-group { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
-        #previewFrame { width: 100%; height: 100%; border: 1px solid #535c91; border-radius: 10px; flex-grow: 1; }
-        button { background: linear-gradient(90deg, #00c6ff, #0072ff); color: white; padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; margin-top: 10px; font-weight: 600; }
-        #generated-code { height: 100px; margin-top: 15px; font-family: monospace; color: #a7d129; }
-        .page-footer { position: fixed; bottom: 8px; left: 0; right: 0; text-align: center; font-size: 11px; color: rgba(255,255,255,0.7); pointer-events: none; }
+        input[type="color"] {
+            padding: 0; border: none; width: 50px; height: 30px;
+            vertical-align: middle; margin-left: 10px; border-radius: 5px;
+        }
+        .checkbox-group { display: flex; align-items: center; }
+        #previewFrame {
+            width: 100%; height: 100%; border: 1px solid #535c91;
+            border-radius: 10px; transition: all 0.3s ease;
+            flex-grow: 1; min-height: 0;
+        }
+        button {
+            background: linear-gradient(90deg, #00c6ff, #0072ff);
+            color: white; padding: 12px 20px; border: none; border-radius: 8px;
+            cursor: pointer; font-size: 16px; font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s; margin-top: 10px;
+        }
+        button:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0, 198, 255, 0.4); }
+        #generated-code {
+            width: 100%; height: 150px; margin-top: 15px;
+            font-family: 'Roboto Mono', monospace; background-color: #0f3460;
+            color: #a7d129; border: 1px solid #535c91; border-radius: 8px;
+            padding: 10px; resize: vertical;
+        }
+        #copyBtn { margin-top: 10px; background: #e94560; }
+        #copyBtn:hover { box-shadow: 0 4px 15px rgba(233, 69, 96, 0.4); }
+        small { font-size: 12px; opacity: 0.7; margin-top: 5px; display: block; }
+        .page-footer {
+            position: fixed; bottom: 8px; left: 0; right: 0;
+            text-align: center; font-size: 11px; color: var(--footer-color);
+            z-index: 1000; pointer-events: none;
+        }
+        .input-with-button { display: flex; gap: 10px; }
+        .input-with-button input { flex: 1; }
+        .upload-btn { padding: 0 15px; border-radius: 8px; border: 1px solid #535c91; background-color: #0f3460; color: #00c6ff; cursor: pointer; font-size: 16px; transition: 0.3s; display: flex; align-items: center; justify-content: center; margin-top: 0; }
+        .upload-btn:hover { background-color: rgba(0, 198, 255, 0.2); border-color: #00c6ff; transform: none; box-shadow: none; }
     </style>
 </head>
 <body>
+    <!-- Copyright (c) 2026 Alina Pogudina @ELT_workshop -->
+
     <div class="main-content">
         <div class="editor-panel">
             <h1>Редактор аудиоплеера</h1>
+
             <div class="form-group" style="display: none;">
-                <label>Публичная ссылка</label>
-                <!-- Убедись, что ссылка ведет на твой player.html -->
+                <label for="publicUrl">Публичная ссылка на player.html</label>
                 <input type="url" id="publicUrl" value="https://alinapogudina-png.github.io/audioplayer-for-Miro-2/player.html">
             </div>
+
             <div class="form-group">
-                <label>Дизайн</label>
+                <label for="designStyle">Дизайн плеера</label>
                 <select id="designStyle">
-                    <option value="standard">Стандартный</option>
-                    <option value="round">Круглый</option>
-                    <option value="russian">Русский (Хохлома)</option>
+                    <option value="standard" selected>Стандартный (Прямоугольный)</option>
+                    <option value="round">Круглый (Компактный)</option>
+                    <option value="russian">Русский узор</option>
                     <option value="minimalist">Минималистичный</option>
                 </select>
             </div>
+
             <div class="form-group">
-                <label>Треки</label>
-                <textarea id="trackLinks" rows="4">https://files.catbox.moe/xk6v0c.mp3 | Пример трека</textarea>
-            </div>
-            <div class="form-group"><label>Обложка</label><input type="url" id="coverUrl" value="https://i.postimg.cc/yxdYB3WT/Untitled-design3.png"></div>
-            <div class="form-group"><label>Цвет фона (для стандартного стиля)</label><input type="color" id="mainColor" value="#4B0082"></div>
-            
-            <div class="checkbox-group"><input type="checkbox" id="neonToggle" checked><label>Неон / Цвет подсветки</label><input type="color" id="neonColor" value="#FF00FF"></div>
-            
-            <div class="checkbox-group">
-                <input type="checkbox" id="autoplayToggle">
-                <label>Авто-переход к следующему треку</label>
+                <label for="trackLinks">Ссылки на ваши треки</label>
+                <textarea id="trackLinks" rows="6" placeholder="Вставьте ссылки на mp3">https://files.catbox.moe/xk6v0c.mp3 | Пример трека</textarea>
+                <small>Каждая строка — один трек:<br><code>https://files.catbox.moe/file.mp3 | Название</code></small>
             </div>
 
-            <div class="form-group"><label>Размер</label><select id="playerSize"><option value="compact">Компактный</option><option value="full">Полный (с плейлистом)</option></select></div>
-            
             <div class="form-group">
-                <label>Шрифт</label>
+                <label>Ссылка на обложку</label>
+                <div class="input-with-button">
+                    <input type="url" id="coverUrl" value="https://i.postimg.cc/yxdYB3WT/Untitled-design3.png">
+                    <button type="button" class="upload-btn" onclick="document.getElementById('coverFile').click()" title="Загрузить с компьютера">📂</button>
+                </div>
+                <input type="file" id="coverFile" accept="image/*" style="display:none;" onchange="handleCoverUpload(event)">
+                <small>Вставьте URL или загрузите файл с ПК (рекомендуется до 1 МБ)</small>
+            </div>
+
+            <div class="form-group">
+                <label for="mainColor">Основной цвет плеера</label>
+                <input type="color" id="mainColor" value="#4B0082">
+            </div>
+            
+            <div class="form-group checkbox-group">
+                <input type="checkbox" id="neonToggle" checked>
+                <label for="neonToggle" style="margin-left: 10px; margin-bottom: 0;">Неоновая подсветка</label>
+                <input type="color" id="neonColor" value="#FF00FF">
+            </div>
+
+            <div class="form-group">
+                <label for="playerSize">Размер (для стандартного стиля)</label>
+                <select id="playerSize">
+                    <option value="compact" selected>Компактный</option>
+                    <option value="full">Полный (с плейлистом)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="playerFont">Шрифт</label>
                 <select id="playerFont">
-                    <option value="Poppins">Poppins (Стандарт)</option>
-                    <option value="Open Sans">Open Sans (Классика)</option>
-                    <option value="Montserrat">Montserrat (Современный)</option>
-                    <option value="Playfair Display">Playfair Display (Элегантный)</option>
-                    <option value="Merriweather">Merriweather (Книжный)</option>
-                    <option value="Lobster">Lobster (Рукописный жирный)</option>
-                    <option value="Pacifico">Pacifico (Рукописный мягкий)</option>
-                    <option value="Comfortaa">Comfortaa (Округлый)</option>
-                    <option value="Kelly Slab">Kelly Slab (Русский киберпанк)</option>
-                    <option value="Ruslan Display">Ruslan Display (Древнерусский)</option>
-                    <option value="Underdog">Underdog (Гранж)</option>
+                    <option value="Poppins">Poppins</option>
+                    <option value="Verdana" selected>Verdana</option>
+                    <option value="Arial">Arial</option>
+                    <option value="Montserrat">Montserrat</option>
+                    <option value="Comfortaa">Comfortaa</option>
+                    <option value="Neucha">Neucha (Рукописный)</option>
+                    <option value="Russo One">Russo One</option>
+                    <option value="Caveat">Caveat (Рукописный)</option>
+                    <option value="Alice">Alice (С засечками)</option>
+                    <option value="Creepster">Creepster (Ужасы/Хеллоуин)</option>
+                    <option value="Pacifico">Pacifico</option>
+                    <option value="Lobster">Lobster</option>
+                    <option value="Amatic SC">Amatic SC</option>
+                    <option value="Oswald">Oswald</option>
+                    <option value="Quicksand">Quicksand</option>
+                    <option value="Open Sans">Open Sans</option>
+                    <option value="Roboto">Roboto</option>
+                    <option value="Press Start 2P">Press Start 2P (Пиксельный)</option>
+                    <option value="Playfair Display">Playfair Display (С засечками)</option>
                 </select>
             </div>
             
             <button id="generateBtn">Сгенерировать код</button>
-            <textarea id="generated-code" readonly></textarea>
-            <button id="copyBtn">Копировать</button>
+            <textarea id="generated-code" readonly placeholder="Код появится здесь..."></textarea>
+            <button id="copyBtn">Копировать код</button>
         </div>
+
         <div class="preview-panel">
             <h2>Предпросмотр</h2>
-            <iframe id="previewFrame" src=""></iframe>
+            <iframe id="previewFrame" src="" frameborder="0"></iframe>
         </div>
     </div>
+
     <div class="page-footer">©2026 Alina Pogudina @ELT_workshop</div>
+
     <script>
-        const controls = { 
-            publicUrl:document.getElementById('publicUrl'), 
-            designStyle:document.getElementById('designStyle'), 
-            trackLinks:document.getElementById('trackLinks'), 
-            coverUrl:document.getElementById('coverUrl'), 
-            mainColor:document.getElementById('mainColor'), 
-            neonToggle:document.getElementById('neonToggle'), 
-            neonColor:document.getElementById('neonColor'), 
-            playerSize:document.getElementById('playerSize'), 
-            playerFont:document.getElementById('playerFont'), 
-            autoplayToggle:document.getElementById('autoplayToggle'),
-            generateBtn:document.getElementById('generateBtn'), 
-            copyBtn:document.getElementById('copyBtn'), 
-            generatedCode:document.getElementById('generated-code'), 
-            previewFrame:document.getElementById('previewFrame') 
+        const controls = {
+            publicUrl: document.getElementById('publicUrl'),
+            designStyle: document.getElementById('designStyle'),
+            trackLinks: document.getElementById('trackLinks'),
+            coverUrl: document.getElementById('coverUrl'),
+            coverFile: document.getElementById('coverFile'),
+            mainColor: document.getElementById('mainColor'),
+            neonToggle: document.getElementById('neonToggle'),
+            neonColor: document.getElementById('neonColor'),
+            playerSize: document.getElementById('playerSize'),
+            playerFont: document.getElementById('playerFont'),
+            generateBtn: document.getElementById('generateBtn'),
+            copyBtn: document.getElementById('copyBtn'),
+            generatedCode: document.getElementById('generated-code'),
+            previewFrame: document.getElementById('previewFrame')
         };
 
-        function update() {
-            const p = new URLSearchParams();
-            p.append('design', controls.designStyle.value);
-            p.append('tracks', encodeURIComponent(controls.trackLinks.value.trim().split('\n').filter(Boolean).map(s=>s.trim()).join('|||')));
-            p.append('cover', controls.coverUrl.value); 
-            p.append('color', controls.mainColor.value);
-            p.append('neon', controls.neonToggle.checked); 
-            p.append('neonColor', controls.neonColor.value);
-            p.append('size', controls.playerSize.value); 
-            p.append('font', controls.playerFont.value);
-            p.append('autoplay', controls.autoplayToggle.checked);
-            
-            controls.previewFrame.src = `${controls.publicUrl.value}?${p.toString()}&t=${Date.now()}`;
-            return p.toString();
+        function handleCoverUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (file.size > 2 * 1024 * 1024) {
+                alert('Файл слишком большой! Максимальный размер: 2 МБ.');
+                event.target.value = '';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                controls.coverUrl.value = e.target.result;
+                updatePreview();
+            };
+            reader.onerror = () => alert('Не удалось прочитать файл.');
+            reader.readAsDataURL(file);
+            event.target.value = '';
         }
 
-        function gen() {
-            let w='500', h='180';
-            if(controls.designStyle.value==='round'){w='350';h='350';} 
-            else if(controls.playerSize.value==='full'){w='800';h='400';}
+        function updatePreview() {
+            const params = new URLSearchParams();
             
-            controls.generatedCode.value = `<iframe src="${controls.publicUrl.value}?${update().split('&t=')[0]}" width="${w}" height="${h}" frameborder="0" allow="autoplay" allowfullscreen allowtransparency style="border-radius:20px;background:transparent;"></iframe>`;
+            params.append('design', controls.designStyle.value);
+            const trackLinksRaw = controls.trackLinks.value.trim().split('\n').filter(Boolean).map(s => s.trim()).join('|||');
+            params.append('tracks', encodeURIComponent(trackLinksRaw));
+            params.append('cover', controls.coverUrl.value);
+            params.append('color', controls.mainColor.value); 
+            params.append('neon', controls.neonToggle.checked);
+            params.append('neonColor', controls.neonColor.value);
+            params.append('size', controls.playerSize.value);
+            params.append('font', controls.playerFont.value);
+
+            const timestamp = new Date().getTime();
+            const previewUrl = `${controls.publicUrl.value}?${params.toString()}&t=${timestamp}`;
+            
+            controls.previewFrame.src = previewUrl;
+            return params.toString();
         }
         
-        Object.values(controls).forEach(c => c.tagName && c.addEventListener(c.tagName==='BUTTON'?'click':'input', c===controls.generateBtn?gen:c===controls.copyBtn?()=>{controls.generatedCode.select();document.execCommand('copy')}:update));
+        function generateCode() {
+            const paramsString = updatePreview().split('&t=')[0];
+            const baseUrl = controls.publicUrl.value;
+            
+            const playerUrl = `${baseUrl}?${paramsString}`;
+            
+            let width = '500';
+            let height = '180';
+            
+            if (controls.designStyle.value === 'round') {
+                width = '320';
+                height = '320';
+            } else if (controls.playerSize.value === 'full') {
+                width = '800';
+                height = '400';
+            }
+
+            const iframeCode = `<iframe src="${playerUrl}" width="${width}" height="${height}" frameborder="0" allowfullscreen="true" allow="autoplay" allowtransparency="true" style="border-radius: 20px; background-color: transparent;"></iframe>`;
+            controls.generatedCode.value = iframeCode;
+        }
+
+        function copyCode() {
+            if (controls.generatedCode.value) {
+                controls.generatedCode.select();
+                document.execCommand('copy');
+                alert('Код скопирован!');
+            }
+        }
+
+        Object.values(controls).forEach(element => {
+            if (element && (element.tagName === 'INPUT' || element.tagName === 'SELECT' || element.tagName === 'TEXTAREA') && element.type !== 'file') {
+                element.addEventListener('input', updatePreview);
+            }
+        });
         
         controls.designStyle.addEventListener('change', () => {
-            if (controls.designStyle.value === 'round') controls.playerSize.disabled = true;
-            else controls.playerSize.disabled = false;
-            update();
+            if (controls.designStyle.value === 'round') {
+                controls.playerSize.disabled = true;
+            } else {
+                controls.playerSize.disabled = false;
+            }
+            updatePreview();
         });
-        update();
+
+        controls.neonToggle.addEventListener('change', () => {
+             controls.neonColor.style.display = controls.neonToggle.checked ? 'inline-block' : 'none';
+             updatePreview();
+        });
+        controls.generateBtn.addEventListener('click', generateCode);
+        controls.copyBtn.addEventListener('click', copyCode);
+
+        updatePreview();
     </script>
 </body>
 </html>
