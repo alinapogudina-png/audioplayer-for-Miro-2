@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Audio Player</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Kelly+Slab&family=Lobster&family=Merriweather:wght@400;700&family=Montserrat:wght@400;700&family=Nunito:wght@400;700&family=Open+Sans:wght@400;700&family=Pacifico&family=Playfair+Display:wght@400;700&family=Poppins:wght@400;600&family=Press+Start+2P&family=Roboto+Mono&family=Ruslan+Display&family=Underdog&display=swap&subset=cyrillic" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Alice&family=Amatic+SC:wght@700&family=Caveat:wght@400;700&family=Comfortaa:wght@400;700&family=Creepster&family=Kelly+Slab&family=Lobster&family=Merriweather:wght@400;700&family=Montserrat:wght@400;700&family=Neucha&family=Nunito:wght@400;700&family=Open+Sans:wght@400;700&family=Oswald:wght@400;600&family=Pacifico&family=Playfair+Display:wght@400;700&family=Poppins:wght@400;600&family=Press+Start+2P&family=Quicksand:wght@400;600&family=Roboto+Mono&family=Roboto:wght@400;700&family=Ruslan+Display&family=Russo+One&family=Underdog&display=swap&subset=cyrillic" rel="stylesheet">
     
     <style>
         *, *::before, *::after { box-sizing: border-box; }
@@ -60,8 +60,8 @@
         }
         .track-info { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-shadow: 0 0 5px rgba(0,0,0,0.5); margin-bottom: 5px;}
         
-        #trackTitle { font-size: 20px; font-weight: 600; margin: 0; }
-        #trackArtist { display: none !important; } /* Скрыто везде */
+        #trackTitle { font-size: 20px; font-weight: 600; margin: 0; font-family: var(--font-family), sans-serif; }
+        #trackArtist { display: none !important; }
         
         .progress-container { width: 100%; display: flex; align-items: center; gap: 8px; font-size: 12px; margin: 5px 0;}
         #progress-bar {
@@ -182,7 +182,6 @@
         </div>
     </div>
 
-    <!-- ДОБАВЛЕНЫ АТРИБУТЫ playsinline и preload ДЛЯ ТЕЛЕФОНОВ -->
     <audio id="audioSource" crossorigin="anonymous" playsinline preload="auto"></audio>
 
     <script>
@@ -244,7 +243,9 @@
             root.style.setProperty('--player-bg-color-dynamic', rgbaColor);
             player.style.backgroundColor = rgbaColor;
 
-            root.style.setProperty('--font-family', params.get('font') || 'Poppins');
+            const fontName = params.get('font') || 'Poppins';
+            root.style.setProperty('--font-family', fontName);
+            document.body.style.fontFamily = `"${fontName}", sans-serif`;
 
             if (params.get('neon') === 'true') {
                 player.classList.add('neon');
@@ -302,21 +303,13 @@
             progressBar.value = 0; updatePlaylistUI();
         }
 
-        // --- ГЛАВНОЕ ИСПРАВЛЕНИЕ ДЛЯ ТЕЛЕФОНОВ ---
         function playTrack() { 
             if(!isVisualizerInit) initVisualizer(); 
-            
-            // "Размораживаем" звук для iOS/Android
-            if (audioCtx && audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-
+            if (audioCtx && audioCtx.state === 'suspended') { audioCtx.resume(); }
             audio.play().then(()=>{ 
                 isPlaying=true; 
                 playPauseBtn.innerHTML='<i class="fas fa-pause-circle"></i>';
-            }).catch((err)=>{
-                console.error("Воспроизведение заблокировано телефоном:", err);
-            }); 
+            }).catch((err)=>{ console.error("Playback blocked:", err); }); 
         }
 
         function pauseTrack() { audio.pause(); isPlaying=false; playPauseBtn.innerHTML='<i class="fas fa-play-circle"></i>'; }
@@ -337,9 +330,7 @@
         progressBar.addEventListener('input', (e) => { audio.currentTime = (e.target.value/100)*audio.duration; });
         
         audio.addEventListener('ended', () => { 
-            if(isRepeat) { 
-                audio.currentTime=0; playTrack(); 
-            } 
+            if(isRepeat) { audio.currentTime=0; playTrack(); } 
             else { 
                 if (autoPlayNext) {
                     if (currentTrackIdx < tracks.length - 1 || isShuffle) nextTrack();
